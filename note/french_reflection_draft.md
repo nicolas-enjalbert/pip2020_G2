@@ -52,13 +52,23 @@ _Beautiful Soup_ pas mal pour récuperer des informations sur un code HTML
 
   
   
-  
-  
-  
-  
-  
-  
-##  
+# Retour de la séance de préparation du 25/11/20  
+
+Le but du groupe est de trouver le plus de nouvelles sources possibles. Il faut donc avoir un rappel fort (nous avons le plus de vrai sources pertinentes dans notre collecte). On va donc ratisser large. 
+
+Une des premières missions est de trouver un lexique sur l'INNOVATION. 
+Il va falloir faire l'identification de ces sources => avoir une liste de sources. 
+Récupérer les mots clefs qui ont permis de faire cette identification (/!\ car nécessaire pour Jérèm)
+
+Les documents sont uniquement en français comme les mots clefs. Nous allons nous fixer aussi à des documents en francais 
+
+Nous n'allons pas nous préoccupé dans un premier temps du dédoublenage  
+Pour avoir la pertinence des sites web nous allons nous contenté dans un premier temps d'avoir des mots clefs de la thématique et de l'innovation (liste à finir de définir) 
+Voir des thésaurus pour avoir d'autre mots clefs 
+
+Voir pour faire un lancement automatique tous les x temps.  
+
+granularité assez fine pour bien voi l'évaluation ? 
 
 
 
