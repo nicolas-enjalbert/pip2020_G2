@@ -72,3 +72,13 @@ granularité assez fine pour bien voi l'évaluation ?
 
 
 
+# Libraries et méthodes préselectionnées
+
+https://makina-corpus.com/blog/metier/2018/seo-scraping-machine-learning-comprendre-le-fonctionnement-dun-moteur-de-recherche  
+
+Faire un crawler pour selectionner les pages:  
+  * _scrapy_ en python pour aller de page en page  
+  * voir le ranking de google en page rank 
+
+
+
