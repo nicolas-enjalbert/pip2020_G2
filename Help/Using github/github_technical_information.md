@@ -6,6 +6,58 @@ Date:     November 8, 2020
 
 Ce fichier est une aide mémoire, tutoriel pour l'utilisation de Github et ses interfaces possibles : GitKraken et le terminal de votre ordinateur.
 
+# Manipulation GitKraken
+
+Le logiciel gitkraken offre une interface de gestion git avec un dépôt distant. Il permet de contourner les lignes de commandes du terminal. 
+
+## Télécharger gitkraken
+
+La première étape est de télécharger le logiciel. Veuillez suivre les instructions proposées par https://www.gitkraken.com/ et télécharger la versions du logiciel qui correspond à votre ordinateur. 
+
+## Connexion et clonage du dépôt 
+
+Vous pouvez vous connecter à votre compte github depuis l'application. Celle ci vous redirigera vers le site internet github pour valider la démarche. 
+
+Une fois fait, vous devez cloner le dépôt centralisé pour pouvoir y accéder localement et travailler depuis votre ordinateur. 
+Pour cela, il suffit de faire la suite d'opération suivante :  
+  * Cliquer sur Clône un dépot  
+  * Aller dans l'onglet `Clone` puis `Github.com`.   
+  * Si tout va bien, vous avez accès dans la case 'Repository to clone' à notre dépôt nommé NICOLAS-ENJALBERT/PIP2021_G2  
+  * Choisir le dossier qui accueillera votre dépôt local  
+  * Valider (Clôner)  
+
+## Découverte de l'interface
+
+Pour comprendre les possibilités de gitkraken et son interface vous pouvez vous référer au document _gitkraken-cheat-sheet-v1.6.pdf_. 
+
+## Aller sur sa branche
+
+Dans la partie Gauche de l'interface, vous trouverez l'onglet `Remote`, déroulez le et placez vous dans la branche qui vous est dédiée. Pour cela faire un clic droit et accéder à `Checkout yourBranch` avec yourBranch qui est le nom de votre branche. 
+
+## Travail
+
+Avant de travailler, et à chaque début de journée, voir de demi journée, veuillez faire un pull en cliquant sur le bouton dédié dans le bandeau supérieur de l'interface. 
+
+Vous pouvez travailler et faire vos diverses modifications sur votre branche ouverte :  
+  - créer de nouveaux fichiers  
+  - créer de nouveaux dossiers et sous dossiers  
+  - modifier des fichiers existants  
+  - etc ...  
+
+## Soumettre vos modifications sur le serveur central et les partager avec vos collaborateurs. 
+
+Vos fichiers modifiés, vous aurez une notification dans la colonne droite de l'interface. La première étape est de faire un `pull` dans le bandeau supérieur de l'interface.
+
+Veuillez selectionner vos fichiers à ajouter en cliquant sur `Stage all changes` ou en sélectionnant manuellement les fichiers avec `Stage file`. 
+Veuillez vérifier que les fichiers que vous voulez soumettre se trouve bien dans la case `Staged files` et ne sont plus dans `Unstaged files`. 
+
+Veuillez Inscrire un message explicatif pour nous permettre de comprendre les modifications que vous avez apporté. 
+
+Il suffit maintenant d'appuyer sur `Commit change to x files`. 
+Maintenant vous pouvez appuyer dans le bandeau haut sur le bouton `Push`. 
+
+Votre modification est bien déposé sur le dépôt distant.
+
 
 # Manipulation Git dans le terminal 
 
