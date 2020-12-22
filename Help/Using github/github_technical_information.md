@@ -8,27 +8,27 @@ Ce fichier est une aide mémoire, tutoriel pour l'utilisation de Github et ses i
 
 # Manipulation GitKraken
 
-Le logiciel gitkraken offre une interface de gestion git avec un dépôt distant. Il permet de contourner les lignes de commandes du terminal. 
+Le logiciel GitKraken offre une interface de gestion git avec un dépôt distant. Il permet de contourner les lignes de commandes du terminal. 
 
-## Télécharger gitkraken
+## Télécharger GitKraken
 
 La première étape est de télécharger le logiciel. Veuillez suivre les instructions proposées par https://www.gitkraken.com/ et télécharger la versions du logiciel qui correspond à votre ordinateur. 
 
 ## Connexion et clonage du dépôt 
 
-Vous pouvez vous connecter à votre compte github depuis l'application. Celle ci vous redirigera vers le site internet github pour valider la démarche. 
+Vous pouvez vous connecter à votre compte github depuis l'application. Celle ci vous redirigera vers le site internet Github pour valider la démarche. 
 
 Une fois fait, vous devez cloner le dépôt centralisé pour pouvoir y accéder localement et travailler depuis votre ordinateur. 
 Pour cela, il suffit de faire la suite d'opération suivante :  
-  * Cliquer sur Clône un dépot  
+  * Cliquer sur Clone un dépôt  
   * Aller dans l'onglet `Clone` puis `Github.com`.   
   * Si tout va bien, vous avez accès dans la case 'Repository to clone' à notre dépôt nommé NICOLAS-ENJALBERT/PIP2021_G2  
   * Choisir le dossier qui accueillera votre dépôt local  
-  * Valider (Clôner)  
+  * Valider (Cloner)  
 
 ## Découverte de l'interface
 
-Pour comprendre les possibilités de gitkraken et son interface vous pouvez vous référer au document _gitkraken-cheat-sheet-v1.6.pdf_. 
+Pour comprendre les possibilités de GitKraken et son interface vous pouvez vous référer au document _gitkraken-cheat-sheet-v1.6.pdf_. 
 
 ## Aller sur sa branche
 
@@ -48,7 +48,7 @@ Vous pouvez travailler et faire vos diverses modifications sur votre branche ouv
 
 Vos fichiers modifiés, vous aurez une notification dans la colonne droite de l'interface. La première étape est de faire un `pull` dans le bandeau supérieur de l'interface.
 
-Veuillez selectionner vos fichiers à ajouter en cliquant sur `Stage all changes` ou en sélectionnant manuellement les fichiers avec `Stage file`. 
+Veuillez sélectionner vos fichiers à ajouter en cliquant sur `Stage all changes` ou en sélectionnant manuellement les fichiers avec `Stage file`. 
 Veuillez vérifier que les fichiers que vous voulez soumettre se trouve bien dans la case `Staged files` et ne sont plus dans `Unstaged files`. 
 
 Veuillez Inscrire un message explicatif pour nous permettre de comprendre les modifications que vous avez apporté. 
@@ -64,7 +64,7 @@ Votre modification est bien déposé sur le dépôt distant.
 Ce chapitre permet de comprendre l'utilisation Git quand on utilise son terminal. 
 
 ## Cloner un dépôt distant  
-Dans le cas du projet interpromo, un dépôt a été créé et initié. Celui ci se trouve au lien suivant https://github.com/nicolas-enjalbert/pip2020_G2 . En suivant ce lien, vous trouverez la version en ligne du dépôt sous l'interface de github.  
+Dans le cas du projet inter-promo, un dépôt a été créé et initié. Celui ci se trouve au lien suivant https://github.com/nicolas-enjalbert/pip2020_G2  ou sur le lien que votre chef vous indiquera. En suivant ce lien, vous trouverez la version en ligne du dépôt sous l'interface de Github.  
 Pour travailler depuis votre ordinateur, il faut commencer par créer une copie de ce dépôt sur votre ordinateur. 
 Pour ce faire veuillez ouvrir votre terminal et se placer dans le dossier qui accueillera le dossier git. Pour cela deux possibilités :  
 	- ouvrir le terminal et se déplacer vers le dossier correspondant avec la commande `cd`  
@@ -79,7 +79,7 @@ Pour ne pas se marcher dessus et faciliter le partage des fichiers entre les col
 L'instruction `git checkout yourBranch` permet d'aller sur la branche nommée yourBranch. 
 
 Une façon de savoir si cela a marché :  
-  * se placer dans le dossier local du git avant la maniuplation  
+  * se placer dans le dossier local du git avant la manipulation  
   * faire la manipulation sur le terminal  
   * retourner dans le gestionnaire de fichier et constater que les fichiers et sous dossier ont changé  
 
@@ -100,7 +100,7 @@ Vous pouvez travailler et faire vos diverses modifications sur votre branche ouv
 Une fois votre travail effectué où à la fin de la journée, il est temps de partager le travail que vous avez fait ! :) 
 Une série d'action est nécessaire pour faire cela. 
 
-Dans un premier temps il peut etre judicieux de faire un `git status` pour savoir où en est le dépot. Si vous n'avez pas de message d'erreur ou rien ne contre indiquant que votre git n'est pas à jour nous pouvons continuer. 
+Dans un premier temps il peut être judicieux de faire un `git status` pour savoir où en est le dépôt. Si vous n'avez pas de message d'erreur ou rien ne contre indiquant que votre git n'est pas à jour nous pouvons continuer. 
 
 Pour ne pas avoir de conflit, veuillez faire un pull. Pour rappel cela se faisait aisément avec la commande `git pull`. Avec le message 'Already up-to-date.' vous pouvez continuer vous n'avez pas de conflit.
 
@@ -117,4 +117,3 @@ Si vous n'avez pas de message d'erreur alors tout va bien ! Félicitations
 
 
   
-
