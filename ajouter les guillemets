@@ -1,0 +1,7 @@
+def addGuillemet(listMot):
+  newList=[]
+  for mot in listMot :
+    newList.append('"'+mot+'"')
+  return newList
+gestion=addGuillemet(gestion)
+innpvation=addGuillemet(innovation)
