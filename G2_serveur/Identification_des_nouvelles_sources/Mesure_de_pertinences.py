@@ -1,0 +1,1 @@
+%run fonction_pertinences.py
