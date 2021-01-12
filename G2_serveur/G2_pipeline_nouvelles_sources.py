@@ -1,23 +1,18 @@
-#prendre la liste des équations de recherches dans 'Données/liste_requete.json'
-import pandas as pd
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jan 12 10:42:23 2021
 
-queries = pd.read_json('/home/sid2019-7/Documents/M2/PIP2021/G2_serveur/Données /liste_requetes.json')
-print(queries)
+@author: degau
+"""
 
-#assembler les mots clefs 
+# Importing files
+from Identification_des_nouvelles_sources.g2_Launch_Crawler_v1 import *
 
-#lire le fichier API_key.txt
-import datetime
-API_key = open("/home/sid2019-7/Documents/M2/PIP2021/G2_serveur/Identification_des_nouvelles_sources/API_key.txt", 'r').read()
+#p_length = 1
+# p_requestNumber, p_date, p_nb_results
 
-string = datetime.datetime.now().strftime("%Y/%m/%d - %H:%M:%S")
-
-
-dateCrawl = open("/home/sid2019-7/Documents/M2/PIP2021/G2_serveur/Identification_des_nouvelles_sources/google_crawling_derniere_date.txt", 'r').read()
-dateCrawl = datetime.datetime.strptime(dateCrawl, '%Y/%m/%d - %H:%M:%S')
-
-
-print(dateCrawl)
+# Launch crawling
+Launch_Crawler()
 
 
 
@@ -33,14 +28,3 @@ print(dateCrawl)
 
 
 
-
-
-
-
-
-
-
-#A la fin du crawler google
-fichier = open("/home/sid2019-7/Documents/M2/PIP2021/G2_serveur/Identification_des_nouvelles_sources/google_crawling_derniere_date.txt", "w")
-fichier.write(string)
-fichier.close()

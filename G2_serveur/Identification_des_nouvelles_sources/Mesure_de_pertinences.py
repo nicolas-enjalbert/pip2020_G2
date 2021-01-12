@@ -1,1 +1,2 @@
-%run fonction_pertinences.py
+def fonction1(): 
+    return "abcd"
