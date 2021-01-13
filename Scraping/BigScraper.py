@@ -1632,7 +1632,7 @@ class BigScraper:
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, art_img, art_auth, art_tag]
-    
+
     @staticmethod
     def scrap_generic(url):
         response = requests.get(url)
@@ -1643,17 +1643,16 @@ class BigScraper:
                         'pre', 'mark', 'small', 'del', 's', 'ins', 'u', 'sub', 'sup', 'dfn', 'p', 'span', 'ul', 'li']
         if soup.find('article') is not None:
             content_html = soup.find('article')
-            if soup.find('article').find_all(list_balises, recursive = False):
-                content = soup.find('article').find_all(list_balises, string = True)
+            if soup.find('article').find_all(list_balises, recursive=False):
+                content = soup.find('article').find_all(
+                    list_balises, string=True)
                 content = ' '.join(tag.text for tag in content)
             else:
-                list_p = soup.find('article').find_all('div', recursive = 'False')
-                print([p.parent.name for p in list_p])
+                list_p = soup.find('article').find_all(
+                    'div', recursive='False')
                 list_parent_p = [p.parent for p in list_p]
-                print(list_parent_p)
                 if len(set(list_parent_p)) == 1:
                     content_html = list_parent_p[0]
-                    print(content_html)
                     content = ' '.join(
                         tag.text for tag in content_html.children if tag.name in list_balises)
                 else:
@@ -1663,20 +1662,23 @@ class BigScraper:
         else:
             list_div = list()
             for el in soup.find_all('div'):
-                if el.find_all('p', recursive = False):
+                if el.find_all('p', recursive=False):
                     list_div.append(el)
-            index_max = np.argmax([len(block.find_all('p')) for block in list_div])
+            index_max = np.argmax([len(block.find_all('p'))
+                                   for block in list_div])
             content_html = list_div[index_max]
             content = ' '.join(
                 tag.text for tag in content_html.children if tag.name in list_balises)
-        content = content.replace('\xa0', '').replace('\t', '').replace('\r', '').strip()
+
+        content = content.replace('\xa0', '').replace(
+            '\t', '').replace('\r', '').strip()
         content_html_str = str(content_html)
-        
+
         # Getting date of publication
         if soup.find("meta", {"property"
-                            "article:modified_time"}) is not None:
+                              "article:modified_time"}) is not None:
             date = soup.find("meta", {"property"
-                                    "article:modified_time"})["content"]
+                                      "article:modified_time"})["content"]
         elif soup.find("meta", {"property": "article:published_time"}) is not None:
             date = soup.find("meta", {"property": "article:published_time"})[
                 "content"]
@@ -1707,7 +1709,8 @@ class BigScraper:
 
         # Getting source name
         if soup.find("meta", {"property": "og:site_name"}) is not None:
-            src_name = soup.find("meta", {"property": "og:site_name"})["content"]
+            src_name = soup.find("meta", {"property": "og:site_name"})[
+                "content"]
         else:
             src_name = art_url.split(r"//")
             if "http" in src_name[0]:
@@ -1729,7 +1732,8 @@ class BigScraper:
 
         # Getting author
         if soup.find("meta", {"name": "author"}) is not None:
-            art_auth = soup.find("meta", {"name": "author"})["content"].split(",")
+            art_auth = soup.find("meta", {"name": "author"})[
+                "content"].split(",")
         elif soup.find("meta", {"name": "twitter:data1"}) is not None:
             art_auth = soup.find("meta", {'name': "twitter:data1"})[
                 "content"].split(",")
@@ -1741,9 +1745,11 @@ class BigScraper:
 
         # Getting tags
         if soup.find("meta", {"name": "keywords"}) is not None:
-            art_tag = soup.find("meta", {"name": "keywords"})["content"].split(",")
+            art_tag = soup.find("meta", {"name": "keywords"})[
+                "content"].split(",")
         elif soup.find("meta", {"sage": "sageTags"}) is not None:
-            art_tag = soup.find("meta", {"sage": "sageTags"})["content"].split(",")
+            art_tag = soup.find("meta", {"sage": "sageTags"})[
+                "content"].split(",")
         elif soup.find("meta", {"property": "article:tag"}) is not None:
             art_tag = soup.find("meta", {"property": "article:tag"})[
                 "content"].split(",")
