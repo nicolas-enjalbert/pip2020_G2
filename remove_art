@@ -1,0 +1,38 @@
+list_uninteresting : list =['www.linkedin.com','fr.linkedin.com','www.linguee.com','www.researchgate.net','docplayer.org','docplayer.net','docplayer.fr','books.google.com','books.google.fr','www.cairn.info','www.pinterest.com','www.pinterest.fr','fr.indeed.com','www.indeed.fr','www.indeed.com','www.facebook.com','viadeo.journaldunet.com','fr.wikipedia.org','www.senat.fr','www.amazon.com','www.amazon.fr','www.youtube.com','twitter.com','www.slideshare.net','fr.slideshare.net','www.calameo.com','www.talent.com','fr.talent.com','issuu.com','www.aijobs.tech','www.economie.gouv.fr','theses.fr','www.theses.fr','hal.archives-ouvertes.fr','fr.scribd.com','www.scribd.com','https://www.legifrance.gouv.fr','www2.assemblee-nationale.fr','www.assemblee-nationale.fr','www2.assemblee-nationale.fr','www.ccomptes.fr','www.vie-publique.fr','www.banquedesterritoires.fr','core.ac.uk','www.cnfpt.fr','www.malt.fr','www.malt.com','link.springer.com','www.sciencedirect.com','slideplayer.fr','slideplayer.org','slideplayer.com']
+list_G1 : list =['fncdg.com', 'lab-innovation.cget.gouv.fr', 'public.agedi.fr', 'www.departements.fr', 'www.fonction-publique.gouv.fr', 'www.innovationreview.eu', 'www.lettreducadre.fr', 'www.slate.fr', 'afigese.fr', 'aife.economie.gouv.fr', 'blog.soprahr.com', 'cnnumerique.fr', 'financeactive.com', 'gfi.world', 'usbeketrica.com', 'www.actuia.com', 'www.adcf.org', 'www.adgcf.fr', 'www.amf.asso.fr', 'www.apvf.asso.fr', 'www.association-sdds.org', 'www.banquedesterritoires.fr', 'www.ccomptes.fr', 'www.cegid.com', 'www.cgi.fr', 'www.cig929394.fr', 'www.ciril.net', 'www.citopia.fr', 'www.cnfpt.fr', 'www.cohesion-territoires.gouv.fr', 'www.collectivites-locales.gouv.fr', 'www.economie.gouv.fr', 'www.eksae.fr', 'www.fonction-publique.gouv.fr', 'www.idcite.com', 'www.jvs-mairistem.fr', 'www.la-fabrique.fr', 'www.ladn.eu', 'www.lagazettedescommunes.com', 'www.larevuedudigital.com', 'www.latribune.fr', 'www.lemagdesterritoiresnumeriques.com', 'www.lepoint.fr', 'www.lesechos.fr', 'www.mgdis.fr', 'www.net-entreprises.fr', 'www.sage.com', 'www.sndgct.fr', 'www.soprahr.com', 'www.technologyreview.com', 'www.usine-digitale.fr', 'www.vie-publique.fr', 'www.viepublique.fr', 'www.villeintelligente-mag.fr']
+
+
+def url_site(url_art):
+  """Documentation
+  Parameters:
+    url_art : the url of an article
+  Out :
+    url_site : the url of a site obtained with the article's url
+    """
+  site  =url_art.split("://")
+  #keep everything on the right side of "https://""
+  if site[0]=="https" or site[0]=="http":
+      url_site : str =site[1]
+  else:
+      url_site : str =site[0]
+  #delete everything after the first "/"
+  tab : list =url_site.split("/")
+  url_site=tab[0]
+  return url_site
+
+
+def retirer_sites(df, list_G1 : list, list_uninteresting : list):
+  """Documentation
+  Parameters:
+    df : a dataFrame of articles' URL
+    list_G1 : the list of the sites the G1 scrapped
+    list_uninteresting : a list of non-pertinent sites like linkedin, facebook, etc
+  Out :
+    df_copy : the df without the sites we don't want
+    """
+  list_remove : list =list_G1+list_uninteresting #concatenation of the 2 lists
+  list_url=[]
+  for index, row in df.iterrows():
+    if url_site(row['url']) not in list_remove:
+      list_url.append(row['url'])
+  return pd.DataFrame(list_url, columns =['url'])
