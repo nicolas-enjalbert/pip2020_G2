@@ -1632,6 +1632,125 @@ class BigScraper:
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, art_img, art_auth, art_tag]
+    
+    @staticmethod
+    def scrap_generic(url):
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Getting content
+        list_balises = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'b', 'strong', 'i', 'em',
+                        'pre', 'mark', 'small', 'del', 's', 'ins', 'u', 'sub', 'sup', 'dfn', 'p', 'span', 'ul', 'li']
+        if soup.find('article') is not None:
+            content_html = soup.find('article')
+            if soup.find('article').find_all(list_balises, recursive = False):
+                content = soup.find('article').find_all(list_balises, string = True)
+                content = ' '.join(tag.text for tag in content)
+            else:
+                list_p = soup.find('article').find_all('div', recursive = 'False')
+                print([p.parent.name for p in list_p])
+                list_parent_p = [p.parent for p in list_p]
+                print(list_parent_p)
+                if len(set(list_parent_p)) == 1:
+                    content_html = list_parent_p[0]
+                    print(content_html)
+                    content = ' '.join(
+                        tag.text for tag in content_html.children if tag.name in list_balises)
+                else:
+                    content_html = soup.find('article')
+                    content = [el.get_text() for el in list_parent_p]
+                    content = ' '.join(content)
+        else:
+            list_div = list()
+            for el in soup.find_all('div'):
+                if el.find_all('p', recursive = False):
+                    list_div.append(el)
+            index_max = np.argmax([len(block.find_all('p')) for block in list_div])
+            content_html = list_div[index_max]
+            content = ' '.join(
+                tag.text for tag in content_html.children if tag.name in list_balises)
+        content = content.replace('\xa0', '').replace('\t', '').replace('\r', '').strip()
+        content_html_str = str(content_html)
+        
+        # Getting date of publication
+        if soup.find("meta", {"property"
+                            "article:modified_time"}) is not None:
+            date = soup.find("meta", {"property"
+                                    "article:modified_time"})["content"]
+        elif soup.find("meta", {"property": "article:published_time"}) is not None:
+            date = soup.find("meta", {"property": "article:published_time"})[
+                "content"]
+        else:
+            date = datetime.date.today()
+
+        # Getting language
+        art_lang = TextBlob(content).detect_language()
+
+        # Getting title
+        if soup.find("meta", {"property": "og:title"}) is not None:
+            title = soup.find("meta", {"property": "og:title"})["content"]
+        elif soup.find("title") is not None:
+            title = soup.find("title").get_text()
+        else:
+            title = np.nan
+
+        # Getting article url
+        if soup.find("meta", {"property": "og:url"}) is not None:
+            art_url = soup.find("meta", {"property": "og:url"})["content"]
+        elif soup.find("link", rel="canonical"):
+            art_url = soup.find("link", rel="canonical")["href"]
+        else:
+            art_url = url
+
+        # Getting source url
+        src_url = BigScraper.get_base_url(art_url)
+
+        # Getting source name
+        if soup.find("meta", {"property": "og:site_name"}) is not None:
+            src_name = soup.find("meta", {"property": "og:site_name"})["content"]
+        else:
+            src_name = art_url.split(r"//")
+            if "http" in src_name[0]:
+                src_name = src_name[1]
+            else:
+                src_name = src_name[0]
+            src_name = src_name.split(r"/")[0]
+            for i in ["fr.", "www.", "www2.", ".org", ".fr", ".eu", ".net", ".com"]:
+                src_name = src_name.replace(i, "")
+
+        # Source type
+        src_type = "xpath_source"
+
+        # Getting image
+        if soup.find("meta", {"property": "og:image"}) is not None:
+            art_img = soup.find("meta", {"property": "og:image"})["content"]
+        else:
+            art_img = np.nan
+
+        # Getting author
+        if soup.find("meta", {"name": "author"}) is not None:
+            art_auth = soup.find("meta", {"name": "author"})["content"].split(",")
+        elif soup.find("meta", {"name": "twitter:data1"}) is not None:
+            art_auth = soup.find("meta", {'name': "twitter:data1"})[
+                "content"].split(",")
+        elif soup.find("meta", {"property": "sage:author"}) is not None:
+            art_auth = soup.find("meta", {"property": "sage:author"})[
+                "content"].split(",")
+        else:
+            art_auth = np.nan
+
+        # Getting tags
+        if soup.find("meta", {"name": "keywords"}) is not None:
+            art_tag = soup.find("meta", {"name": "keywords"})["content"].split(",")
+        elif soup.find("meta", {"sage": "sageTags"}) is not None:
+            art_tag = soup.find("meta", {"sage": "sageTags"})["content"].split(",")
+        elif soup.find("meta", {"property": "article:tag"}) is not None:
+            art_tag = soup.find("meta", {"property": "article:tag"})[
+                "content"].split(",")
+        else:
+            art_tag = np.nan
+
+        return [content, content_html_str, date, art_lang, title, art_url, src_url, src_name, src_type, art_img, art_auth, art_tag]
 
     @staticmethod
     def assign_scraper(url: str) -> BigScraper:
@@ -1697,8 +1816,7 @@ class BigScraper:
             return BigScraper.scrap_usinenouvelle(url)
         elif "https://www.linternaute.fr/" in url:
             return BigScraper.scrap_linternaute(url)
-
-        return None
+        return BigScraper.scrap_generic(url)
 
     def scrap(self: BigScraper, url: str) -> list:
         """Documentation
