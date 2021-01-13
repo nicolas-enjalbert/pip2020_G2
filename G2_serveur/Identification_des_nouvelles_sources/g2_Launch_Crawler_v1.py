@@ -31,7 +31,7 @@ from datetime import timedelta
 import time
 
 # Parameters to change 
-#from Parameters import *
+from Identification_des_nouvelles_sources.Parameters import *
 
     
 ########## Folders ##########
@@ -272,9 +272,6 @@ def Launch_Crawler():
     
     
     ########## Start building URLs ##########
-    p_length = 1
-    p_requestNumber = 10
-    p_nb_results = 100
     df_result = list(GoogleSpider().start_requests(p_listCouple, p_length, p_requestNumber, p_date, p_nb_results))[0]
     
     ########## Crawling of Google results ##########
