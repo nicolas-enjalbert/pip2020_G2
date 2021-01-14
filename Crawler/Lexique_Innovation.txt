@@ -1,0 +1,126 @@
+innovation
+devops
+interopérabilité
+migration automatique
+idm
+mde
+ingénierie dirigée par les modèles
+ligne de produits
+traçabilité
+iot
+ro
+recherche opérationnelle
+ml
+machine learning
+ia
+intelligence artificielle
+nlp
+traitement automatique du langage
+analyse d'image
+3d
+ihm
+data-visualisation
+visualisation d'informations
+visualisation de données
+datavis
+infovis
+ar
+vr
+mr
+réalité augmentée
+réalité virtuelle
+réalité mixte
+robot
+robotique
+robotique sociale
+sig
+réseau
+sécurité
+si
+systèmes d'information
+software
+algorithmes génétiques
+nsga
+chatbot
+adl
+abstract description language
+bd
+base de données
+data base
+blockchain
+material design
+deep learning
+reconnaissance d'image
+reconnaissance d'objets 3d
+edge analytics
+big data
+bigdata
+big-data
+rpa
+hyperautomation
+jumeau numérique
+digital twin
+immersive workspace
+digitalops
+augmented intelligence
+wearable
+multitouch
+edge computing
+cloud
+data centers
+5g
+explainable ai
+edge ai
+graphes de connaissances
+knowledge graphs
+ai paas
+graph analytics
+drone
+virtual assistant
+ontologie
+ontologies
+bmi
+brain machine interface
+bci
+silver economy
+smart city
+ville numérique
+université du futur
+université 4.0
+industrie 4.0
+optimisation
+système de recommandation
+moteur de recommandation
+user experience
+ux
+design thinking
+web scraping
+sustainability
+développement durable
+écologie
+résilience
+interfaces intelligentes
+digitalisation
+saas
+microservices
+4.0
+du futur
+civictech
+détection d'anomalies
+déploiement automatique
+fusion de données
+aide à la décision
+low code
+intergiciel
+world sensing
+Ordinateur quantique
+cybersécurité
+véhicule autonome
+low-tech
+do it yourself
+makers
+DIY
+conjoncture
+enjeux
+prospective
+nouvelle génération
