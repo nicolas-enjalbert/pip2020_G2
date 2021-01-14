@@ -1,0 +1,21 @@
+def pertinence_6_source(df_pertinence_6):
+  dico_pertinence={}
+  for articles in df_pertinence_6.itertuples():
+    if url_site(articles.art_url) in dico_pertinence:
+      dico_pertinence[url_site(articles.art_url)][0]+=articles.pertinence_10**2
+      dico_pertinence[url_site(articles.art_url)][1]+=articles.pertinence_5**2
+      dico_pertinence[url_site(articles.art_url)][2]+=articles.pertinence_2**2
+      dico_pertinence[url_site(articles.art_url)][3]+=articles.pertinence_F1**2
+      dico_pertinence[url_site(articles.art_url)][4]+=1
+    else :
+      dico_pertinence[url_site(articles.art_url)]=[articles.pertinence_10**2,articles.pertinence_5**2,articles.pertinence_2**2,articles.pertinence_F1**2,1]
+  df=pd.DataFrame.from_dict(dico_pertinence, orient='index',columns=['pertinence_10','pertinence_5','pertinence_2','pertinence_F1', 'nb_articles'])
+  df['pertinence_10_moyenne']=df.apply(lambda row: row.pertinence_10 / row.nb_articles, axis=1)
+  df['pertinence_5_moyenne']=df.apply(lambda row: row.pertinence_5 / row.nb_articles, axis=1)
+  df['pertinence_2_moyenne']=df.apply(lambda row: row.pertinence_2 / row.nb_articles, axis=1)
+  df['pertinence_F1_moyenne']=df.apply(lambda row: row.pertinence_F1 / row.nb_articles, axis=1)
+  return df
+
+df_work=df_save.copy()
+df_pertinence_6=pertinence_6(df_work)
+pertinence_6_source(df_pertinence_6)
