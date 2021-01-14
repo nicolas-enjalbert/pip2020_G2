@@ -1716,7 +1716,12 @@ class BigScraper:
             date = datetime.date.today()
 
         # Getting language
-        art_lang = TextBlob(content).detect_language()
+        if content is not None:
+            art_lang = TextBlob(content).detect_language()
+        elif soup.find("meta", {"property": "og:locale"}) is not None:
+            art_lang = soup.find("meta", {"property": "og:locale"})["content"].split("_")[0]
+        else:
+            art_lang = np.nan
 
         # Getting title
         if soup.find("meta", {"property": "og:title"}) is not None:
