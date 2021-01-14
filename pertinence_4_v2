@@ -1,0 +1,51 @@
+df_work #df d'articles scrappés
+
+def calcul_global_v2(df,list_columns,lexiqueI,lexiqueG): #pertinence par articles
+  #for columns in list_columns:
+    #df_work[columns]= [cleandesc(x.columns) for x in df_work.itertuples()]
+  col_numb=len(df.columns)
+  list_nom_colonne_I=[]
+  list_nom_colonne_G=[]
+  cleanedG= [cleandesc(mot) for mot in lexiqueG]
+  cleanedI= [cleandesc(mot) for mot in lexiqueI]
+  def calcul_score(texte,lexique):
+    somme=0
+    for mot in lexique:
+      somme+=texte.count(' '+mot+' ')
+    return somme
+  for columns in list_columns:
+    nomI='score_innovation_'+columns
+    nomG='score_gestion_'+columns
+    df[nomI]=[calcul_score(df.loc[i][columns], cleanedI) for i in range(len(df))]
+    df[nomG]=[calcul_score(df.loc[i][columns], cleanedG) for i in range(len(df))]
+    df['score_'+columns]=[df.loc[i][nomI]+df.loc[i][nomG] for i in range(len(df))]
+    list_nom_colonne_I.append(nomI)
+    list_nom_colonne_G.append(nomG)
+  df['taille_content']=[len(df['art_content'][i]) for i in range(len(df))]
+  df['score_I']=df[list_nom_colonne_I].sum(axis=1)
+  df['score_G']=df[list_nom_colonne_G].sum(axis=1)
+  df['score_abs']=abs(df['score_I']-df['score_G'])
+  df['detct_0']=[0 if (x.score_I==0) or (x.score_G==0) else 1 for x in df_work.itertuples()]
+  df['score_total']=[(1.09*(x.score_I+x.score_G)-abs(x.score_I-x.score_G))*100/x.taille_content if x.detct_0==0 else (1.09*(x.score_I+x.score_G)-abs(x.score_I-x.score_G))*1000/x.taille_content for x in df_work.itertuples()]
+  return df
+  
+#on commence par clean les colonnes du df sur lesquels on fait la pertinence
+df_work['art_content']= [cleandesc(x.art_content) for x in df_work.itertuples()]
+df_work['art_tag']= [cleandesc(x.art_tag) for x in df_work.itertuples()]
+df_work['art_title']= [cleandesc(x.art_title) for x in df_work.itertuples()]
+
+df_calc_global=calcul_global_v2(df_work,['art_content','art_tag','art_title'],innovation,gestion) #on travaille sur les colonnes art_content, art_tag, art_title
+
+def pertinence_4_source(df_calcul_global): #pertinence par source à partir d'un df d'articles dont on a calculé la pertinence 4
+  dico={}
+  for articles in df_calcul_global.itertuples():
+    if url_site(articles.art_url) in dico:
+      dico[url_site(articles.art_url)][0]+=(articles.score_total)**2
+      dico[url_site(articles.art_url)][1]+=1
+    else :
+      dico[url_site(articles.art_url)]=[(articles.score_total)**2,1]
+  df=pd.DataFrame.from_dict(dico, orient='index',columns=['score_total', 'nb_articles'])
+  df['score_moyen']=df.apply(lambda row: row.score_total / row.nb_articles, axis=1)
+  return df
+
+pertinence_4_source(df_calc_global)
