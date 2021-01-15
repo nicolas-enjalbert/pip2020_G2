@@ -290,7 +290,10 @@ class BigScraper:
         # content, html_content
         content_html = html_soup.find("div", {"class": "storyBody"})
         content_html_str = str(content_html)
-        content = content_html.text
+        if content_html is not None:
+            content = content_html.text
+        else:
+            content = np.nan
         # date, author
         zone_infos = html_soup.find("div", {"class": "byline"})
         zone_infos = zone_infos.find("p", {"class": "meta"})
@@ -1794,7 +1797,7 @@ class BigScraper:
         return [content, content_html_str, date, art_lang, title, art_url, src_url, src_name, src_type, art_img, art_auth, art_tag]
 
     @staticmethod
-    def assign_scraper(url: str) -> BigScraper:
+    def assign_scraper(url: str) -> "BigScraper":
         # Jason
         if "https://changethework.com/" in url:
             return BigScraper.scrap_changethework(url)
