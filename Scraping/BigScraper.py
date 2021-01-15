@@ -208,7 +208,7 @@ class BigScraper:
         except:
             img = np.nan
         # lang
-        if not np.isnan(content):
+        if type(content) == str:
             art_lang = TextBlob(content).detect_language()
         else:
             art_lang = np.nan
@@ -253,7 +253,10 @@ class BigScraper:
         except:
             date = datetime.datetime.today().strftime("%Y-%m-%d")
         # art_lang
-        art_lang = TextBlob(content).detect_language()
+        if type(content) == str:
+            art_lang = TextBlob(content).detect_language()
+        else:
+            art_lang = np.nan
         # title
         try:
             zone_title = html_soup.find("div", {"id": "jStickySize"})
@@ -383,7 +386,10 @@ class BigScraper:
         # title
         title = html_soup.find("meta", {"property": "og:title"})["content"]
         # art_lang
-        art_lang = TextBlob(content).detect_language()
+        if type(content) == str:
+            art_lang = TextBlob(content).detect_language()
+        else:
+            art_lang = np.nan
         # src_url
         src_url = BigScraper.get_base_url(url)
         # data to add in dataframe
@@ -1279,9 +1285,12 @@ class BigScraper:
             art_img = np.nan
 
         art_auth = np.nan
-
-        art_tag = html_soup.find(
-            "div", {"class": "article__tag"}).find("img")["alt"].split(",")
+        
+        try:
+            art_tag = html_soup.find(
+                "div", {"class": "article__tag"}).find("img")["alt"].split(",")
+        except:
+            art_tag = np.nan
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, art_img, art_auth, art_tag]
