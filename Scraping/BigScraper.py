@@ -108,7 +108,7 @@ class BigScraper:
         try:
             content_html = html_soup.find("div", {"class": "contenu_c"})
             content_html_str = str(content_html)
-            content = content.text
+            content = content_html.text
         except:
             content_html_str = np.nan
             content = np.nan
