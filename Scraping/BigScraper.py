@@ -1371,17 +1371,26 @@ class BigScraper:
             art_published_datetime = datetime.date.today()
 
         # Analysis of the language of the text with the TextBlob library
-        art_lang = TextBlob(art_content).detect_language()
+        if type(art_content) == str and len(art_content) >= 3:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
 
         # Retrieval of the title in meta property, replacing '\xa0' by ''
-        art_title = html_soup.find("meta", {"property": "og:title"})[
-            "content"].replace("\xa0", "")
+        try:
+            art_title = html_soup.find("meta", {"property": "og:title"})[
+                "content"].replace("\xa0", "")
+        except:
+            art_title = np.nan
 
         art_url = url
 
         # Retrieval of the website's name in meta property
-        src_name = html_soup.find(
-            "meta", {"property": "og:site_name"})["content"]
+        try:
+            src_name = html_soup.find(
+                "meta", {"property": "og:site_name"})["content"]
+        except:
+            src_name = "silicon"
 
         src_type = "xpath_source"
 
@@ -1396,13 +1405,17 @@ class BigScraper:
             art_img = html_soup.find("meta", {"itemprop": "image"})["content"]
 
         # Retrieval of the author of the article
-        art_auth = html_soup.find("meta", {"itemprop": "author"})[
-            "content"].split(",")
+        try:
+            art_auth = html_soup.find("meta", {"itemprop": "author"})[
+                "content"].split(",")
+        except:
+            art_auth = np.nan
 
         # Retrieval of the tag(s) of the article in meta property, if there are no tags we return np.nan
-        art_tag = [el["content"] for el in html_soup.find_all(
-            "meta", {"property": "article:tag"})]
-        if not art_tag:
+        try:
+            art_tag = [el["content"] for el in html_soup.find_all(
+                "meta", {"property": "article:tag"})]
+        except:
             art_tag = np.nan
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
