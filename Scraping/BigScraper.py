@@ -73,7 +73,10 @@ class BigScraper:
                 "meta", {"property": "article:modified_time"})["content"]
             art_extract_datetime = datetime.datetime.strptime(
                 art_extract_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
-        art_lang = TextBlob(art_content).detect_language()
+        if type(art_content) == str and len(art_content) >= 3:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
         art_title = soup.find("meta", {"property": "og:title"})["content"]
         art_url = soup.find("meta", {"property": "og:url"})["content"]
         src_name = soup.find("meta", {"property": "og:site_name"})["content"]
@@ -668,10 +671,7 @@ class BigScraper:
         except:
             art_title = np.nan
 
-        try:
-            art_url = soup.find("link", rel="canonical").get("href")
-        except:
-            art_url = url
+        art_url = url
 
         src_type = "xpath_source"
 
@@ -1401,8 +1401,10 @@ class BigScraper:
         if html_soup.find("picture", {"class": "img"}) is not None:
             art_img = html_soup.find(
                 "picture", {"class": "img"}).find("source")["srcset"]
-        else:
+        elif html_soup.find("meta", {"itemprop": "image"}) is not None:
             art_img = html_soup.find("meta", {"itemprop": "image"})["content"]
+        else:
+            art_img = np.nan
 
         # Retrieval of the author of the article
         try:
