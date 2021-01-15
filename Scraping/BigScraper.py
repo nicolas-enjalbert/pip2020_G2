@@ -208,7 +208,10 @@ class BigScraper:
         except:
             img = np.nan
         # lang
-        art_lang = TextBlob(content).detect_language()
+        if content != np.nan:
+            art_lang = TextBlob(content).detect_language()
+        else:
+            art_lang = np.nan
         # src_url
         src_url = BigScraper.get_base_url(url)
         # tag
