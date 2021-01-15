@@ -208,7 +208,7 @@ class BigScraper:
         except:
             img = np.nan
         # lang
-        if content != np.nan:
+        if not np.isnan(content):
             art_lang = TextBlob(content).detect_language()
         else:
             art_lang = np.nan
