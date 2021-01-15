@@ -370,9 +370,16 @@ class BigScraper:
             content_html_str = np.nan
             content = np.nan
         # date
-        date = html_soup.find("meta", {"property": "article:published_time"})[
-            "content"]
-        date = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z").date()
+        if html_soup.find("meta", {"property": "article:modified_time"}) is not None:
+            date = html_soup.find("meta", {"property": "article:modified_time"})[
+                "content"]
+            date = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z").date()
+        elif html_soup.find("meta", {"property": "article:published_time"}) is not None:
+            date = html_soup.find("meta", {"property": "article:published_time"})[
+                "content"]
+            date = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z").date()
+        else:
+            date = datetime.date.today()        
         # title
         title = html_soup.find("meta", {"property": "og:title"})["content"]
         # art_lang
