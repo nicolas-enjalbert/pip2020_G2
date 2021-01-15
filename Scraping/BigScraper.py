@@ -509,10 +509,14 @@ class BigScraper:
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
 
-        art_content_html = soup.find(
-            "div", class_="td-post-content").find_all("p")
-        art_content_html_str = str(art_content_html)
-        art_content = "".join([x.text for x in art_content_html])
+        try:
+            art_content_html = soup.find(
+                "div", class_="td-post-content").find_all("p")
+            art_content_html_str = str(art_content_html)
+            art_content = "".join([x.text for x in art_content_html])
+        except:
+            art_content_html_str = np.nan
+            art_content = np.nan
 
         # Extraction de la date de l'article
         if soup.find("meta", property="article:modified_time") is not None:
@@ -529,25 +533,43 @@ class BigScraper:
             art_extract_datetime = datetime.date.today()
 
         # Langue de l'article
-        art_lang = TextBlob(art_content).detect_language()
+        if type(art_content) == str and len(art_content) >= 3:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
 
         # Titre
-        art_title = soup.find("meta", property="og:title").get("content")
+        try:
+            art_title = soup.find("meta", property="og:title").get("content")
+        except:
+            art_title = np.nan
 
         # Url
-        art_url = soup.find("link", rel="canonical").get("href")
+        try:
+            art_url = soup.find("link", rel="canonical").get("href")
+        except:
+            art_url = url
 
         # Nom de la source
-        src_name = soup.find("meta", property="og:site_name").get("content")
+        try:
+            src_name = soup.find("meta", property="og:site_name").get("content")
+        except:
+            src_name = "cadre-dirigeant-magazine"
 
         # Type de la source
         src_type = "xpath_source"
 
         # url source
-        src_url = soup.find("form", class_="td-search-form").get("action")
+        try:
+            src_url = soup.find("form", class_="td-search-form").get("action")
+        except:
+            src_url = "https://www.cadre-dirigeant-magazine.com/"
 
         # Image(s)
-        src_img = soup.find("meta", property="og:image").get("content")
+        try:
+            src_img = soup.find("meta", property="og:image").get("content")
+        except:
+            src_img = np.nan
 
         # Auteur de l'article
         try:
