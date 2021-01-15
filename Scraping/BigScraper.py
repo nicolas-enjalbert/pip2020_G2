@@ -106,8 +106,8 @@ class BigScraper:
         html_soup = BeautifulSoup(response.text, "html.parser")
         # content, content_html
         try:
-            content = html_soup.find("div", {"class": "contenu_c"})
-            content_html = str(content)
+            content_html = html_soup.find("div", {"class": "contenu_c"})
+            content_html_str = str(content)
             content = content.text
         except:
             content_html_str = np.nan
@@ -137,7 +137,7 @@ class BigScraper:
         else:
             title = np.nan
         # Remplissage du dataframe
-        row = [content, content_html, date, art_lang, title, url,
+        row = [content, content_html_str, date, art_lang, title, url,
                "fnccr", "xpath_source", src_url, np.nan, np.nan, tag]
         return row
 
@@ -1804,6 +1804,15 @@ class BigScraper:
 
     @staticmethod
     def scrap_generic(url):
+        """Documentation
+
+        Parameters:
+            url: url of an article to scrap
+
+        Out:
+            Data scraped
+
+        """
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
 
