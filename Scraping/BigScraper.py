@@ -636,26 +636,41 @@ class BigScraper:
 
         art_extract_datetime = datetime.date.today()
 
-        art_lang = TextBlob(art_content).detect_language()
+        if type(art_content) == str:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
+        
+        try:
+            art_title = soup.find("meta", property="og:title").get("content")
+        except:
+            art_title = np.nan
 
-        art_title = soup.find("meta", property="og:title").get("content")
-
-        art_url = soup.find("link", rel="canonical").get("href")
+        try:
+            art_url = soup.find("link", rel="canonical").get("href")
+        except:
+            art_url = url
 
         src_type = "xpath_source"
 
         src_url = BigScraper.get_base_url(art_url)
 
         src_name = src_url.replace("https://", "").replace("/", "")
-
-        src_img = soup.find("meta", property="og:image").get("content")
+    
+        try:
+            src_img = soup.find("meta", property="og:image").get("content")
+        except:
+            src_img = np.nan
 
         art_auth = np.nan
 
-        art_tag = []
-        tags = soup.find_all("a", class_="label label-default")
-        for x in tags:
-            art_tag.append(x.get("title"))
+        try:
+            art_tag = []
+            tags = soup.find_all("a", class_="label label-default")
+            for x in tags:
+                art_tag.append(x.get("title"))
+        except:
+            art_tag = np.nan
 
         return [art_content, art_content_html_str, art_extract_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, src_img, art_auth, art_tag]
@@ -1456,18 +1471,18 @@ class BigScraper:
         if time is None or time == []:
             time = 'no data'
         else:
-            trans_month = {"01": ["janvier"],
-                           "02": ["février"],
+            trans_month = {"01": ["janvier", "jan"],
+                           "02": ["février", "fev"],
                            "03": ["mars"],
-                           "04": ["avril"],
+                           "04": ["avril", "avr"],
                            "05": ["mai"],
                            "06": ["juin"],
-                           "07": ["juillet"],
+                           "07": ["juillet", "juil.", "juil"],
                            "08": ["août"],
-                           "09": ["septembre"],
-                           "10": ["octobre"],
-                           "11": ["novembre"],
-                           "12": ["décembre"]}
+                           "09": ["septembre", "sept"],
+                           "10": ["octobre", "oct"],
+                           "11": ["novembre", "nov"],
+                           "12": ["décembre", "dev"]}
             date_tab = time.split(" ")
             day = date_tab[0]
             month = date_tab[1]
