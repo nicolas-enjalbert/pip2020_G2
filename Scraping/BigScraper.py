@@ -1264,11 +1264,16 @@ class BigScraper:
                 art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         else:
             art_published_datetime = datetime.date.today()
+        
+        if type(art_content) == str:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
 
-        a = TextBlob(art_content)
-        art_lang = a.detect_language()
-
-        art_title = html_soup.find("meta", {"property": "og:title"})["content"]
+        try:
+            art_title = html_soup.find("meta", {"property": "og:title"})["content"]
+        except:
+            art_title = np.nan
 
         art_url = url
 
