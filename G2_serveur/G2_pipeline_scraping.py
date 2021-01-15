@@ -3,19 +3,35 @@ from Scrapping_nouvelles_sources.BigScraper import *
 import pandas as pd
 
 def dailyScrapping():
+    """Documentation:
+
+    This function calls several function of the project to get URL of articles
+    in a site and scrap them.
+   
+    Parameters:
+        
+    Out:
+        
+    """
     #Import list of sources
-    sources = pd.read_json('Données/tags_crawl.json')
-    keywords = #import
+    sources: pd.DataFrame = pd.read_json('Données/tags_crawl.json')
+    sources: pd.DataFrame = sources.replace({np.nan: None})
     
-    #Ici faire une entrée avec le crawler par site
-    list_url = []
+    keywords:  = #import a list of list of kw or dataframe
+    
+    #Crawl by site
+    list_url: list(list) = []
     for i in sources.index:
         for kw in keywords:
-            pages = get_query_src_page(pages=, keywords=kw, 
+            #Generate source code of webpage
+            #pages is fix to 1 because we didn't manage to treat the page
+            #switch during the project.
+            pages: list = get_query_src_page(pages=1, keywords=kw, 
                                        source_url=sources['url_source'][i], 
                                        search_url=sources['url_search'][i], 
-                                       url_attr=None, 
+                                       url_attr=sources['url_attr'][i], 
                                        separator=sources['separator'][i])
+            #Get URL of each article
             list_url.append(
                     get_art_url(page_list=pages, 
                                 source_url=sources['url_source'][i], 
@@ -24,10 +40,9 @@ def dailyScrapping():
                                 attr_value=['attr_value'][i])
                     )
     
-    
-    
-    
-
+    #Create a flat list from the list of list "list_url"
+    list_url_flat: list = [url for sublist in list_url for url in sublist]
+        
 
     BG = BigScraper()
     urls = pd.read_json('listTestArt.json')
