@@ -1444,9 +1444,15 @@ class BigScraper:
             art_content_html_str = np.nan
             art_content = np.nan
         src_type = "xpath_source"
-        art_url = soup.find("meta", {"property": "og:url"})["content"]
+        try:
+            art_url = soup.find("meta", {"property": "og:url"})["content"]
+        except:
+            art_url = url
         src_url = BigScraper.get_base_url(art_url)
-        src_name = soup.find("meta", {"property": "og:site_name"})["content"]
+        try:
+            src_name = soup.find("meta", {"property": "og:site_name"})["content"]
+        except:
+            src_name = "riskinsight"
         if soup.find("meta", {"name": "twitter:data1"}) is not None:
             art_auth = soup.find("meta", {"name": "twitter:data1"})[
                 "content"].split(",")
@@ -1468,7 +1474,10 @@ class BigScraper:
             art_title = soup.title.get_text()
         except:
             art_title = np.nan
-        art_lang = TextBlob(art_content).detect_language()
+        if type(art_content) == str and len(art_content) >= 3:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
         if soup.find_all("a", {"class": "tag--link"}) is not None:
             art_tag = [el.get_text()
                        for el in soup.find_all("a", {"class": "tag--link"})]
@@ -1667,7 +1676,6 @@ class BigScraper:
             art_img = np.nan
 
         # art_tag
-        #art_tag = json.loads(html_soup.find('script', type = 'application/ld+json')['@type'])
         art_tag = np.nan
 
         #art_content_html  and  art_content
@@ -1684,14 +1692,15 @@ class BigScraper:
             else:
                 art_content_html = art_content_html_corps
                 art_content = art_content_html_corps.get_text().replace("\xa0", "")
-                # REPLACE NE MARCHE PAS
         except:
-            # problems with https://www.lemonde.fr/transition-ecologique/article/2020/08/03/les-villes-et-leurs-jumeaux-numeriques_6048030_179.html
             art_content_html = np.nan
             art_content = np.nan
 
         # art_lang
-        art_lang = TextBlob(art_content).detect_language()
+        if type(art_content) == str and len(art_content) >= 3:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
 
         art_content_html_str = str(art_content_html)
 
@@ -1759,7 +1768,6 @@ class BigScraper:
         if html_soup.find("meta", {"property": "og:image"}) is not None:
             art_img = html_soup.find(
                 "meta", {"property": "og:image"})["content"]
-
         else:
             art_img = np.nan
 
@@ -1786,8 +1794,10 @@ class BigScraper:
             art_content = np.nan
 
         # art_lang
-        a = TextBlob(art_content)
-        art_lang = a.detect_language()
+        if type(art_content) == str and len(art_content) >= 3:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url, src_name, src_type, src_url, art_img, art_auth, art_tag]
 
@@ -1875,14 +1885,16 @@ class BigScraper:
             art_content = np.nan
 
         # art_lang
-        a = TextBlob(art_content)
-        art_lang = a.detect_language()
+        if type(art_content) == str and len(art_content) >= 3:
+            art_lang = TextBlob(art_content).detect_language()
+        else:
+            art_lang = np.nan
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, art_img, art_auth, art_tag]
 
     @staticmethod
-    def scrap_generic(url):
+    def scrap_generic(url: str) -> list:
         """Documentation
 
         Parameters:
