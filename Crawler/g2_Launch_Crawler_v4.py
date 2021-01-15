@@ -306,7 +306,7 @@ def Launch_Crawler(p_listCouple,
     pattern_resume = re.compile("\"snippet\"[^,]+")
     pattern_pos = re.compile("\"position\"[^,]+")
 
-    df_sources = pd.DataFrame(columns=['URL','Query','Title','Snippet','Position'])
+    df_sources = pd.DataFrame(columns=['URL','Query','Title','Snippet','Rank'])
     
     for source in list_source:
 
