@@ -155,7 +155,9 @@ class BigScraper:
             content_html = np.nan
             content = np.nan
         # date
-        date = html_soup.find("div", {"class": "ctn-gen-auteur"}).text
+        date = None
+        if html_soup.find("div", {"class": "ctn-gen-auteur"}) is not None:
+            date = html_soup.find("div", {"class": "ctn-gen-auteur"}).text
 
         if date is None:
             date = datetime.date.today()
@@ -254,7 +256,7 @@ class BigScraper:
         # author
         try:
             link_author = html_soup.find("a", {"rel": "author"})
-            author = link_author.text
+            author = link_author.text.split(",")
         except:
             author = np.nan
         # tags
@@ -295,7 +297,7 @@ class BigScraper:
         # author
         try:
             zone_author = zone_infos.find("span")
-            author = zone_author.find("span").text
+            author = zone_author.find("span").text.split(",")
         except:
             author = np.nan
         # date
@@ -438,7 +440,7 @@ class BigScraper:
         src_url = BigScraper.get_base_url(art_url)
         art_img = soup.find("meta", property="og:image").get("content")
         art_auth = soup.find(
-            "meta", attrs={"name": "twitter:data1"}).get("content")
+            "meta", attrs={"name": "twitter:data1"}).get("content").split(",")
         art_tag = np.nan
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, art_img, art_auth, art_tag]
@@ -496,7 +498,7 @@ class BigScraper:
         src_img = soup.find("meta", property="og:image").get("content")
 
         # Auteur de l'article
-        art_auth = soup.find("div", class_="td-post-author-name").text
+        art_auth = soup.find("div", class_="td-post-author-name").text.split(",")
 
         # Tag de l'auteur
         art_tag = np.nan
@@ -546,7 +548,7 @@ class BigScraper:
 
         art_auth = np.nan
 
-        art_tag = soup.find("meta", attrs={"name": "keywords"}).get("content")
+        art_tag = soup.find("meta", attrs={"name": "keywords"}).get("content").split(",")
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, src_img, art_auth, art_tag]
@@ -591,7 +593,7 @@ class BigScraper:
 
         src_img = soup.find("meta", property="og:image").get("content")
 
-        art_auth = soup.find("link", rel="author").get("href")
+        art_auth = np.nan
 
         art_tag = []
         tags = soup.find_all("a", class_="label label-default")
@@ -641,7 +643,7 @@ class BigScraper:
         art_auth = np.nan
 
         if soup.find("meta", attrs={"name": "keywords"}):
-            art_tag = soup.find("meta", attrs={"name": "keywords"})
+            art_tag = soup.find("meta", attrs={"name": "keywords"}).split(",")
         else:
             art_tag = np.nan
 
@@ -688,7 +690,7 @@ class BigScraper:
 
         src_img = soup.find("meta", property="og:image").get("content")
 
-        art_auth = soup.find("span", rel="author").text
+        art_auth = soup.find("span", rel="author").text.split(",")
 
         art_tag = []
         art_tag.append(soup.find("a", attrs={"itemprop": "keywords"}).text)
@@ -736,7 +738,7 @@ class BigScraper:
         src_type = "xpath_source"  # default value
         src_url = BigScraper.get_base_url(art_url)
         src_img = soup.find("meta", {"property": "og:image"})["content"]
-        art_auth = soup.find("a", {"rel": "author"}).text
+        art_auth = soup.find("a", {"rel": "author"}).text.split(",")
         art_tag = soup.find("meta", {"name": "keywords"})["content"].split(",")
         return [art_content, art_content_html_str, art_extract_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, src_img, art_auth, art_tag]
@@ -815,7 +817,7 @@ class BigScraper:
             art_img = np.nan
 
         if soup.find("meta", {"name": "author"}) is not None:
-            art_auth = soup.find("meta", {"name": "author"})["content"]
+            art_auth = soup.find("meta", {"name": "author"})["content"].split(",")
         else:
             art_auth = np.nan
 
@@ -916,7 +918,7 @@ class BigScraper:
         if art_auth is None:
             art_auth = np.nan
         else:
-            art_auth = art_auth.text
+            art_auth = art_auth.text.split(",")
 
         # retrieval of the article tags
         if soup.find_all("a", {"rel": "tag"}) is not None:
@@ -960,9 +962,11 @@ class BigScraper:
         src_url = BigScraper.get_base_url(art_url)
         src_img = soup.find("meta", {"property": "og:image"})["content"]
         art_auth = soup.find(
-            "div", class_="author-infos").find("b", {"itemprop": "name"}).get_text()
+            "div", class_="author-infos").find("b", {"itemprop": "name"}).get_text().split(",")
         art_tag = [el.get_text()
                    for el in soup.find_all("a", {"rel": "category tag"})]
+        if not art_tag:
+            art_tag = np.nan
         return [art_content, art_content_html_str, art_extract_datetime, art_lang, art_title, art_url, src_name, src_type, src_url, src_img, art_auth, art_tag]
 
     @staticmethod
@@ -1055,7 +1059,7 @@ class BigScraper:
 
         art_img = np.nan
 
-        art_auth = html_soup.find("strong", {"class": "fn"}).text
+        art_auth = html_soup.find("strong", {"class": "fn"}).text.split(",")
 
         art_tag = np.nan
 
@@ -1169,7 +1173,7 @@ class BigScraper:
         art_auth = np.nan
 
         art_tag = html_soup.find(
-            "div", {"class": "article__tag"}).find("img")["alt"]
+            "div", {"class": "article__tag"}).find("img")["alt"].split(",")
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, art_img, art_auth, art_tag]
@@ -1226,12 +1230,12 @@ class BigScraper:
             art_img = html_soup.find("meta", {"itemprop": "image"})["content"]
 
         # Retrieval of the author of the article
-        art_auth = html_soup.find("meta", {"itemprop": "author"})["content"]
+        art_auth = html_soup.find("meta", {"itemprop": "author"})["content"].split(",")
 
         # Retrieval of the tag(s) of the article in meta property, if there are no tags we return np.nan
         art_tag = [el["content"] for el in html_soup.find_all(
             "meta", {"property": "article:tag"})]
-        if art_tag == []:
+        if not art_tag:
             art_tag = np.nan
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
@@ -1260,7 +1264,7 @@ class BigScraper:
         src_url = BigScraper.get_base_url(art_url)
         src_name = soup.find("meta", {"property": "og:site_name"})["content"]
         if soup.find("meta", {"name": "twitter:data1"}) is not None:
-            art_auth = soup.find("meta", {"name": "twitter:data1"})["content"]
+            art_auth = soup.find("meta", {"name": "twitter:data1"})["content"].split(",")
         else:
             art_auth = np.nan
         if soup.find("meta", {"property": "article:modified_time"}) is not None:
@@ -1342,11 +1346,7 @@ class BigScraper:
         if img is None:
             img = np.nan
         # author
-        author = html_soup.find("span", {"class": "fn"}).get_text()
-        if author[11:29] == "La Team Parlons RH":
-            author = author[11:29]
-        else:
-            author = author[11:34]
+        author = html_soup.find("span", {"class": "fn"}).get_text().strip().split(",")
         # art_lang
         art_lang = TextBlob(content).detect_language()
         # src_url
@@ -1391,7 +1391,7 @@ class BigScraper:
         if html_tag is None:
             art_tag = np.nan
         else:
-            art_tag = html_tag.get_text()
+            art_tag = html_tag.get_text().split(",")
         paragraphe = html_soup.find_all("p")
         art_content_html = " ".join([str(x) for x in paragraphe])
         art_content_html_str = str(art_content_html)
@@ -1436,7 +1436,7 @@ class BigScraper:
         # find the article Author (art_auth)
         if html_soup.find("meta", {"property": "og:article:author"}) is not None:
             art_auth = html_soup.find(
-                "meta", {"property": "og:article:author"})["content"]
+                "meta", {"property": "og:article:author"})["content"].split(",")
             if art_auth == []:
                 art_auth = np.nan
         else:
@@ -1524,7 +1524,7 @@ class BigScraper:
 
         # find the article Author (art_auth)
         if html_soup.find("meta", {"itemprop": "name"}) is not None:
-            art_auth = html_soup.find("meta", {"itemprop": "name"})["content"]
+            art_auth = html_soup.find("meta", {"itemprop": "name"})["content"].split(",")
             if art_auth == []:
                 art_auth = np.nan
         else:
@@ -1609,7 +1609,7 @@ class BigScraper:
 
         # find the article Author (art_auth)
         if html_soup.find("a", {"rel": "author"}) is not None:
-            art_auth = html_soup.find("a", {"rel": "author"}).get_text()
+            art_auth = html_soup.find("a", {"rel": "author"}).get_text().split(",")
             if art_auth == []:
                 art_auth = np.nan
         else:
@@ -1667,8 +1667,8 @@ class BigScraper:
         soup = BeautifulSoup(response.text, "html.parser")
 
         # Getting content
-        list_balises = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'b', 'strong', 'i', 'em',
-                        'pre', 'mark', 'small', 'del', 's', 'ins', 'u', 'sub', 'sup', 'dfn', 'p', 'span', 'ul', 'li']
+        list_balises = ["h1", "h2", "h3", "h4", "h5", "h6", "b", "strong", "i", "em",
+                        "pre", "mark", "small", "del", "s", "ins", "u", "sub", "sup", "dfn", "p", "span", "ul", "li"]
         if soup.find('article') is not None:
             content_html = soup.find('article')
             if soup.find('article').find_all(list_balises, recursive=False):
@@ -1859,7 +1859,7 @@ class BigScraper:
             return BigScraper.scrap_linternaute(url)
         return BigScraper.scrap_generic(url)
 
-    def scrap(self: BigScraper, url: str) -> list:
+    def scrap(self, url: str) -> list:
         """Documentation
 
         Parameters:
