@@ -107,7 +107,7 @@ class BigScraper:
         # content, content_html
         try:
             content_html = html_soup.find("div", {"class": "contenu_c"})
-            content_html_str = str(content)
+            content_html_str = str(content_html)
             content = content.text
         except:
             content_html_str = np.nan
@@ -195,11 +195,11 @@ class BigScraper:
             date = datetime.date(int(year), int(month), int(day))
 
         # title
-        zone_title = html_soup.find("div", {"class": "ctn-gen-titre"})
-        title = zone_title.find("h1")
-        if title is not None:
+        try:
+            zone_title = html_soup.find("div", {"class": "ctn-gen-titre"})
+            title = zone_title.find("h1")
             title = title.text
-        else:
+        except:
             title = np.nan
         # img
         try:
