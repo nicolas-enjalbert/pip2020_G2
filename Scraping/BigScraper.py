@@ -77,12 +77,24 @@ class BigScraper:
             art_lang = TextBlob(art_content).detect_language()
         else:
             art_lang = np.nan
-        art_title = soup.find("meta", {"property": "og:title"})["content"]
-        art_url = soup.find("meta", {"property": "og:url"})["content"]
-        src_name = soup.find("meta", {"property": "og:site_name"})["content"]
+        try:
+            art_title = soup.find("meta", {"property": "og:title"})["content"]
+        except:
+            art_title = np.nan
+        try:
+            art_url = soup.find("meta", {"property": "og:url"})["content"]
+        except:
+            art_url = url
+        try:
+            src_name = soup.find("meta", {"property": "og:site_name"})["content"]
+        except:
+            src_name = "changethework"
         src_type = "xpath_source"
         src_url = BigScraper.get_base_url(art_url)
-        src_img = soup.find("meta", {"property": "og:image"})["content"]
+        try:
+            src_img = soup.find("meta", {"property": "og:image"})["content"]
+        except:
+            src_img = np.nan
         try:
             art_auth = [el.get_text().strip() for el in soup.find_all(
                 "span", class_="elementor-post-author")]
