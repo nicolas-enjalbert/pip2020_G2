@@ -52,14 +52,26 @@ def get_query_src_page(pages: int, keywords: list, source_url: str,
         base = base[:-len(separator)]
         base += '/' + url_attr
     page_list = []
-    print(base)
+    """ 
+    This loop may be used when you will treat page switching.
+    Note that you will need a condition to distinguish 2 cases : 
+        -the switch is managed by URL.
+        -the switch is managed dynamically.
+        
     for i in tqdm(range(pages)):
         k = i + 1
         # Simulate a webdriver instance and get the source page 
         wd.get(base + '&page=' + str(k))
         # Transform it with the BS' html parser
         soup = BeautifulSoup(wd.page_source)
-        page_list.append(soup)
+        page_list.append(soup)"""
+        
+    # Simulate a webdriver instance and get the source page 
+    wd.get(base)
+    # Transform it with the BS' html parser
+    soup = BeautifulSoup(wd.page_source)
+    page_list.append(soup)
+    
     return page_list
 
 
@@ -80,23 +92,25 @@ def get_art_url(page_list: list, source_url: str, tag: str,
     Out:
         url_list: list of the urls.
     """
+    
     attr: dict = {attr_key : attr_value}
+    url_list = []
     for page in tqdm(page_list):
         tag_list = page.find_all(tag, attr)
-
-    url_list = []
-
-    if tag == 'a':
-        for article in tag_list:
-            url_list.append(article['href'])
-    else :
-        for article in tag_list:
-            hyperlink = article.find('a') # <a> tags contain the urls
-            url_list.append(hyperlink['href'])
+    
+        if tag == 'a':
+            for article in tag_list:
+                url_list.append(article['href'])
+        else :
+            for article in tag_list:
+                hyperlink = article.find('a') # <a> tags contain the urls
+                url_list.append(hyperlink['href'])
     # Delete potential duplicates
     url_list = list(set(url_list))
     
     # Delete specific urls
+    # Note that these conditions could be improven so the algorithm can delete
+    # more or more specific unwanted url
     url_list_clean: list = []
     for i in range(len(url_list)):
         if ('http' not in url_list[i]):
