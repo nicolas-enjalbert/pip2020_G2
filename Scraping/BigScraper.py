@@ -53,9 +53,13 @@ class BigScraper:
         """
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
-        art_html = soup.find("div", {"style": "text-align: justify;"})
-        art_html_str = str(art_html)
-        art_content = art_html.get_text().strip().replace("\xa0", "")
+        try:
+            art_html = soup.find("div", {"style": "text-align: justify;"})
+            art_html_str = str(art_html)
+            art_content = art_html.get_text().strip().replace("\xa0", "")
+        except:
+            art_html_str = np.nan
+            art_content = np.nan
         if soup.find("meta", {"property": "article:modified_time"})["content"] is None:
             if soup.find("meta", {"property": "article:published_time"})["content"] is None:
                 art_extract_datetime = datetime.date.today()
@@ -76,8 +80,11 @@ class BigScraper:
         src_type = "xpath_source"
         src_url = BigScraper.get_base_url(art_url)
         src_img = soup.find("meta", {"property": "og:image"})["content"]
-        art_auth = [el.get_text().strip() for el in soup.find_all(
-            "span", class_="elementor-post-author")]
+        try:
+            art_auth = [el.get_text().strip() for el in soup.find_all(
+                "span", class_="elementor-post-author")]
+        except:
+            art_auth = np.nan
         art_tag = np.nan
         row = [art_content, art_html_str, art_extract_datetime, art_lang, art_title,
                art_url, src_name, src_type, src_url, src_img, art_auth, art_tag]
@@ -103,7 +110,7 @@ class BigScraper:
             content_html = str(content)
             content = content.text
         except:
-            content_html = np.nan
+            content_html_str = np.nan
             content = np.nan
         # date
         if html_soup.find("time", {"class": "updated"}) is not None:
@@ -155,7 +162,7 @@ class BigScraper:
             content = content_html.text.replace("\xa0", "")
         except:
             # maybe find a way to take into account multiple article structures instead
-            content_html = np.nan
+            content_html_str = np.nan
             content = np.nan
         # date
         date = None
@@ -228,7 +235,7 @@ class BigScraper:
             content_html_str = str(content_html)
             content = content_html.text.replace("\xa0", "")
         except:
-            content_html = np.nan
+            content_html_str = np.nan
             content = np.nan
         # date
         try:
@@ -357,7 +364,7 @@ class BigScraper:
             content_html_str = str(content_html)
             content = content_html.text
         except:
-            content_html = np.nan
+            content_html_str = np.nan
             content = np.nan
         # date
         date = html_soup.find("meta", {"property": "article:published_time"})[
@@ -390,14 +397,21 @@ class BigScraper:
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         # Récupération du contenu de la page web (les paragraphes, avec et sans les balises html)
-        art_content_html = soup.find("div", class_="entry-content")
-        art_content_html_str = str(art_content_html)
-        art_content = art_content_html.get_text().replace("\xa0", "").strip()
+        try:
+            art_content_html = soup.find("div", class_="entry-content")
+            art_content_html_str = str(art_content_html)
+            art_content = art_content_html.get_text().replace("\xa0", "").strip()
+        except:
+            art_content = np.nan
+            art_content_html_str = np.nan
         # Extraction de la date de l'article
-        art_extract_datetime = json.loads(soup.find(
-            "script", class_="yoast-schema-graph yoast-schema-graph--main").get_text())["@graph"][1]["dateModified"]
-        art_extract_datetime = datetime.datetime.strptime(
-            art_extract_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+        try:
+            art_extract_datetime = json.loads(soup.find(
+                "script", class_="yoast-schema-graph yoast-schema-graph--main").get_text())["@graph"][1]["dateModified"]
+            art_extract_datetime = datetime.datetime.strptime(
+                art_extract_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+        except:
+            art_extract_datetime = datetime.date.today()
         # Langue de l'article
         art_lang = soup.find("meta", property="og:locale").get("content")
         # Titre
@@ -433,9 +447,13 @@ class BigScraper:
         """
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
-        art_content_html = soup.find("article")
-        art_content_html_str = str(art_content_html)
-        art_content = art_content_html.get_text().replace("\xa0", "")
+        try:
+            art_content_html = soup.find("article")
+            art_content_html_str = str(art_content_html)
+            art_content = art_content_html.get_text().replace("\xa0", "")
+        except:
+            art_content_html_str = np.nan
+            art_content = np.nan
         if soup.find("meta", property="article:modified_time") is not None:
             art_published_datetime = soup.find(
                 "meta", property="article:modified_time").get("content")
@@ -484,11 +502,13 @@ class BigScraper:
         if soup.find("meta", property="article:modified_time") is not None:
             art_extract_datetime = soup.find(
                 "meta", property="article:modified_time").get("content")
-            art_extract_datetime = datetime.datetime.strptime(art_extract_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_extract_datetime = datetime.datetime.strptime(
+                art_extract_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         elif soup.find("meta", property="article:published_time") is not None:
             art_extract_datetime = soup.find(
                 "meta", property="article:published_time").get("content")
-            art_extract_datetime = datetime.datetime.strptime(art_extract_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_extract_datetime = datetime.datetime.strptime(
+                art_extract_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         else:
             art_extract_datetime = datetime.date.today()
 
@@ -515,7 +535,8 @@ class BigScraper:
 
         # Auteur de l'article
         try:
-            art_auth = soup.find("div", class_="td-post-author-name").text.split(",")
+            art_auth = soup.find(
+                "div", class_="td-post-author-name").text.split(",")
         except:
             art_auth = np.nan
 
@@ -567,7 +588,8 @@ class BigScraper:
 
         art_auth = np.nan
 
-        art_tag = soup.find("meta", attrs={"name": "keywords"}).get("content").split(",")
+        art_tag = soup.find("meta", attrs={"name": "keywords"}).get(
+            "content").split(",")
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, src_img, art_auth, art_tag]
@@ -746,7 +768,7 @@ class BigScraper:
             art_content_html_str = str(art_content_html)
             art_content = art_content_html.text.replace("\xa0", "")
         except:
-            art_content_html = np.nan
+            art_content_html_str = np.nan
             art_content = np.nan
         if soup.find("meta", {"property": "article:modified_time"}) is not None:
             art_extract_datetime = soup.find(
@@ -790,14 +812,12 @@ class BigScraper:
         soup = BeautifulSoup(response.text, "html.parser")
 
         if soup.find("div", {"class": "post-detail-wrap"}) is None:
-            art_content_html = np.nan
+            art_content_html_str = np.nan
+            art_content = np.nan
         else:
             art_content_html = soup.find("div", {"class": "post-detail-wrap"})
             art_content_html_str = str(art_content_html)
-
-        art_content = art_content_html.get_text().replace("\xa0", "").strip()
-        if art_content is None:
-            art_content = np.nan
+            art_content = art_content_html.get_text().replace("\xa0", "").strip()
 
         if soup.find("meta", {"property": "article:modified_time"}) is not None:
             art_published_datetime = soup.find(
@@ -849,7 +869,8 @@ class BigScraper:
             art_img = np.nan
 
         if soup.find("meta", {"name": "author"}) is not None:
-            art_auth = soup.find("meta", {"name": "author"})["content"].split(",")
+            art_auth = soup.find("meta", {"name": "author"})[
+                "content"].split(",")
         else:
             art_auth = np.nan
 
@@ -877,7 +898,7 @@ class BigScraper:
 
         # retrieval of the html content
         if soup.find("article", {"class": "contenuArticle"}) is None:
-            art_content_html = np.nan
+            art_content_html_str = np.nan
         else:
             art_content_html = soup.find(
                 "article", {"class": "contenuArticle"})
@@ -977,9 +998,13 @@ class BigScraper:
         """
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
-        art_content_html = soup.find("div", class_="article-body")
-        art_content_html_str = str(art_content_html)
-        art_content = art_content_html.get_text().replace("\xa0", "").strip()
+        try:
+            art_content_html = soup.find("div", class_="article-body")
+            art_content_html_str = str(art_content_html)
+            art_content = art_content_html.get_text().replace("\xa0", "").strip()
+        except:
+            art_content = np.nan
+            art_content_html_str = np.nan
         if soup.find("meta", {"itemprop": "datePublished"}) is not None:
             art_extract_datetime = soup.find(
                 "meta", {"itemprop": "datePublished"})["content"]
@@ -994,8 +1019,11 @@ class BigScraper:
         src_type = "xpath_source"
         src_url = BigScraper.get_base_url(art_url)
         src_img = soup.find("meta", {"property": "og:image"})["content"]
-        art_auth = soup.find(
-            "div", class_="author-infos").find("b", {"itemprop": "name"}).get_text().split(",")
+        try:
+            art_auth = soup.find(
+                "div", class_="author-infos").find("b", {"itemprop": "name"}).get_text().split(",")
+        except:
+            art_auth = np.nan
         art_tag = [el.get_text()
                    for el in soup.find_all("a", {"rel": "category tag"})]
         if not art_tag:
@@ -1022,7 +1050,7 @@ class BigScraper:
             # Removal of the html tags and replacement of '\xa0' by ''
             art_content = art_content_html.text.replace("\xa0", "")
         except:
-            art_content_html = np.nan
+            art_content_html_str = np.nan
             art_content = np.nan
         # Retrieval of the date and conversion to the datetime format
         art_published_datetime = datetime.datetime.strptime(html_soup.find(
@@ -1073,17 +1101,19 @@ class BigScraper:
             art_content_html_str = str(art_content_html)
             art_content = " ".join([x.text for x in paragraphe])
         except:
-            art_content_html = np.nan
+            art_content_html_str = np.nan
             art_content = np.nan
 
         if html_soup.find("meta", {"property": "article:modified_time"}) is not None:
             art_published_datetime = html_soup.find(
                 "meta", {"property": "article:modified_time"})["content"]
-            art_published_datetime = datetime.datetime.strptime(art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_published_datetime = datetime.datetime.strptime(
+                art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         elif html_soup.find("meta", {"property": "article:published_time"}) is not None:
             art_published_datetime = html_soup.find(
                 "meta", {"property": "article:published_time"})["content"]
-            art_published_datetime = datetime.datetime.strptime(art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_published_datetime = datetime.datetime.strptime(
+                art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         else:
             art_published_datetime = datetime.date.today()
 
@@ -1107,7 +1137,8 @@ class BigScraper:
         art_img = np.nan
 
         try:
-            art_auth = html_soup.find("strong", {"class": "fn"}).text.split(",")
+            art_auth = html_soup.find(
+                "strong", {"class": "fn"}).text.split(",")
         except:
             art_auth = np.nan
 
@@ -1137,16 +1168,18 @@ class BigScraper:
             art_content = " ".join([x.text for x in paragraphs])
         except:
             art_content = np.nan
-            art_content_html = np.nan
+            art_content_html_str = np.nan
 
         if html_soup.find("meta", {"property": "article:modified_time"}) is not None:
             art_published_datetime = html_soup.find(
                 "meta", {"property": "article:modified_time"})["content"]
-            art_published_datetime = datetime.datetime.strptime(art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_published_datetime = datetime.datetime.strptime(
+                art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         elif html_soup.find("meta", {"property": "article:published_time"}) is not None:
             art_published_datetime = html_soup.find(
                 "meta", {"property": "article:published_time"})["content"]
-            art_published_datetime = datetime.datetime.strptime(art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_published_datetime = datetime.datetime.strptime(
+                art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         else:
             art_published_datetime = datetime.date.today()
 
@@ -1159,14 +1192,16 @@ class BigScraper:
 
         src_url = BigScraper.get_base_url(art_url)
 
-        src_name = html_soup.find("meta", {"property": "og:site_name"})["content"]
+        src_name = html_soup.find(
+            "meta", {"property": "og:site_name"})["content"]
 
         src_type = "xpath_source"
 
         src_img = html_soup.find("meta", {"property": "og:image"})["content"]
 
         try:
-            authortemp1 = html_soup.find("ul", {"class": "list-inline infos"}).text
+            authortemp1 = html_soup.find(
+                "ul", {"class": "list-inline infos"}).text
             authortemp2 = authortemp1.split("\n")[5]
             author = authortemp2.split(" ")[1:]
             art_auth = [author[0] + " " + author[1]]
@@ -1198,17 +1233,19 @@ class BigScraper:
             art_content_html_str = str(art_content_html)
             art_content = " ".join([x.text for x in paragraphe])
         except:
-            art_content_html = np.nan
+            art_content_html_str = np.nan
             art_content = np.nan
 
         if html_soup.find("meta", {"property": "article:modified_time"}) is not None:
             art_published_datetime = html_soup.find(
                 "meta", {"property": "article:modified_time"})["content"]
-            art_published_datetime = datetime.datetime.strptime(art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_published_datetime = datetime.datetime.strptime(
+                art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         elif html_soup.find("meta", {"property": "article:published_time"}) is not None:
             art_published_datetime = html_soup.find(
                 "meta", {"property": "article:published_time"})["content"]
-            art_published_datetime = datetime.datetime.strptime(art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
+            art_published_datetime = datetime.datetime.strptime(
+                art_published_datetime, "%Y-%m-%dT%H:%M:%S%z").date()
         else:
             art_published_datetime = datetime.date.today()
 
@@ -1262,7 +1299,7 @@ class BigScraper:
             # Removal of the html tags and replacement of '\xa0' by ''
             art_content = art_content_html.text.replace("\xa0", " ")
         except:
-            art_content_html = np.nan
+            art_content_html_str = np.nan
             art_content = np.nan
 
         # Retrieval of the date and conversion to the datetime format
@@ -1298,7 +1335,8 @@ class BigScraper:
             art_img = html_soup.find("meta", {"itemprop": "image"})["content"]
 
         # Retrieval of the author of the article
-        art_auth = html_soup.find("meta", {"itemprop": "author"})["content"].split(",")
+        art_auth = html_soup.find("meta", {"itemprop": "author"})[
+            "content"].split(",")
 
         # Retrieval of the tag(s) of the article in meta property, if there are no tags we return np.nan
         art_tag = [el["content"] for el in html_soup.find_all(
@@ -1324,15 +1362,20 @@ class BigScraper:
         """
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
-        art_content_html = soup.find("article")
-        art_content_html_str = str(art_content_html)
-        art_content = art_content_html.get_text()
+        try:
+            art_content_html = soup.find("article")
+            art_content_html_str = str(art_content_html)
+            art_content = art_content_html.get_text()
+        except:
+            art_content_html_str = np.nan
+            art_content = np.nan
         src_type = "xpath_source"
         art_url = soup.find("meta", {"property": "og:url"})["content"]
         src_url = BigScraper.get_base_url(art_url)
         src_name = soup.find("meta", {"property": "og:site_name"})["content"]
         if soup.find("meta", {"name": "twitter:data1"}) is not None:
-            art_auth = soup.find("meta", {"name": "twitter:data1"})["content"].split(",")
+            art_auth = soup.find("meta", {"name": "twitter:data1"})[
+                "content"].split(",")
         else:
             art_auth = np.nan
         if soup.find("meta", {"property": "article:modified_time"}) is not None:
@@ -1347,7 +1390,10 @@ class BigScraper:
                 date, "%Y-%m-%dT%H:%M:%S%z").date()
         else:
             art_published_datetime = datetime.date.today()
-        art_title = soup.title.get_text()
+        try:
+            art_title = soup.title.get_text()
+        except:
+            art_title = np.nan
         art_lang = TextBlob(art_content).detect_language()
         if soup.find_all("a", {"class": "tag--link"}) is not None:
             art_tag = [el.get_text()
@@ -1407,14 +1453,21 @@ class BigScraper:
             year = date_tab[2]
             time = datetime.date(int(year), int(month), int(day))
         # title
-        html_title = html_soup.title
-        title = html_title.get_text()
+        try:
+            html_title = html_soup.title
+            title = html_title.get_text()
+        except:
+            title = np.nan
         # img
         img = html_soup.find("meta", {"property": "og:image"})["content"]
         if img is None:
             img = np.nan
         # author
-        author = html_soup.find("span", {"class": "fn"}).get_text().strip().split(",")
+        try:
+            author = html_soup.find(
+                "span", {"class": "fn"}).get_text().strip().split(",")
+        except:
+            author = np.nan
         # art_lang
         art_lang = TextBlob(content).detect_language()
         # src_url
@@ -1452,8 +1505,12 @@ class BigScraper:
         src_name = "Inserm"
         art_url = url
         art_published_datetime = html_soup.find("time")["datetime"]
-        art_published_datetime = datetime.datetime.strptime(art_published_datetime, "%Y-%m-%dT%H:%M:%SZ").date()
-        art_title = html_soup.title.get_text()
+        art_published_datetime = datetime.datetime.strptime(
+            art_published_datetime, "%Y-%m-%dT%H:%M:%SZ").date()
+        try:
+            art_title = html_soup.title.get_text()
+        except:
+            art_title = np.nan
         art_img = np.nan
         html_tag = html_soup.find("a", {"rel": "category"})
         if html_tag is None:
@@ -1499,7 +1556,10 @@ class BigScraper:
             art_url = url
 
         # find the article Title (art_title)
-        art_title = html_soup.title.get_text().replace("\xa0", "")
+        try:
+            art_title = html_soup.title.get_text().replace("\xa0", "")
+        except:
+            art_title = np.nan
 
         # find the article Author (art_auth)
         if html_soup.find("meta", {"property": "og:article:author"}) is not None:
@@ -1540,8 +1600,8 @@ class BigScraper:
                     "p", {"class": "article__desc"})  # prend une sous balise en trop
                 art_content_html = [
                     art_content_html_intro, art_content_html_corps]
-                art_content = (art_content_html_intro.get_text(
-                ) + art_content_html_corps.get_text()).replace("\xa0", "")
+                art_content = (art_content_html_intro.get_text() +
+                               art_content_html_corps.get_text()).replace("\xa0", "")
             else:
                 art_content_html = art_content_html_corps
                 art_content = art_content_html_corps.get_text().replace("\xa0", "")
@@ -1588,11 +1648,15 @@ class BigScraper:
             art_url = url
 
         # find the article Title (art_title)
-        art_title = html_soup.title.get_text().replace("\xa0", "")
+        try:
+            art_title = html_soup.title.get_text().replace("\xa0", "")
+        except:
+            art_title = np.nan
 
         # find the article Author (art_auth)
         if html_soup.find("meta", {"itemprop": "name"}) is not None:
-            art_auth = html_soup.find("meta", {"itemprop": "name"})["content"].split(",")
+            art_auth = html_soup.find("meta", {"itemprop": "name"})[
+                "content"].split(",")
             if art_auth == []:
                 art_auth = np.nan
         else:
@@ -1631,18 +1695,20 @@ class BigScraper:
             art_tag = np.nan
 
         #art_content_html  and  art_content
-        art_content_html_intro = html_soup.find("h2", {"class": "chapo"})
-        art_content_html_corps = html_soup.find(
-            "div", {"class": "contenuArt"})  # prend une sous balise en trop
-        art_content_html = [art_content_html_intro, art_content_html_corps]
-        art_content = art_content_html_intro.get_text(
-        ) + art_content_html_corps.get_text().replace("\'", " ' ")      # REPLACE NE MARCHE PAS
+        try:
+            art_content_html_intro = html_soup.find("h2", {"class": "chapo"})
+            art_content_html_corps = html_soup.find(
+                "div", {"class": "contenuArt"})  # prend une sous balise en trop
+            art_content_html = [art_content_html_intro, art_content_html_corps]
+            art_content_html_str = str(art_content_html)
+            art_content = art_content_html_intro.get_text() + art_content_html_corps.get_text()
+        except:
+            art_content_html_str = np.nan
+            art_content = np.nan
 
         # art_lang
         a = TextBlob(art_content)
         art_lang = a.detect_language()
-
-        art_content_html_str = str(art_content_html)
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url, src_name, src_type, src_url, art_img, art_auth, art_tag]
 
@@ -1673,11 +1739,15 @@ class BigScraper:
             art_url = url
 
         # find the article Title (art_title)
-        art_title = html_soup.title.get_text().replace("\xa0", "")
+        try:
+            art_title = html_soup.title.get_text().replace("\xa0", "")
+        except:
+            art_title = np.nan
 
         # find the article Author (art_auth)
         if html_soup.find("a", {"rel": "author"}) is not None:
-            art_auth = html_soup.find("a", {"rel": "author"}).get_text().split(",")
+            art_auth = html_soup.find(
+                "a", {"rel": "author"}).get_text().split(",")
             if art_auth == []:
                 art_auth = np.nan
         else:
@@ -1717,14 +1787,17 @@ class BigScraper:
             art_tag = np.nan
 
         #art_content_html  and  art_content
-        art_content_html = html_soup.find("div", {"id": "jArticleInside"})
-        art_content = art_content_html.get_text().replace("\xa0", "")
+        try:
+            art_content_html = html_soup.find("div", {"id": "jArticleInside"})
+            art_content_html_str = str(art_content_html)
+            art_content = art_content_html.get_text().replace("\xa0", "")
+        except:
+            art_content_html_str = np.nan
+            art_content = np.nan
 
         # art_lang
         a = TextBlob(art_content)
         art_lang = a.detect_language()
-
-        art_content_html_str = str(art_content_html)
 
         return [art_content, art_content_html_str, art_published_datetime, art_lang, art_title, art_url,
                 src_name, src_type, src_url, art_img, art_auth, art_tag]
@@ -1775,11 +1848,13 @@ class BigScraper:
                               "article:modified_time"}) is not None:
             date = soup.find("meta", {"property"
                                       "article:modified_time"})["content"]
-            date = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z").date()
+            date = datetime.datetime.strptime(
+                date, "%Y-%m-%dT%H:%M:%S%z").date()
         elif soup.find("meta", {"property": "article:published_time"}) is not None:
             date = soup.find("meta", {"property": "article:published_time"})[
                 "content"]
-            date = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z").date()
+            date = datetime.datetime.strptime(
+                date, "%Y-%m-%dT%H:%M:%S%z").date()
         else:
             date = datetime.date.today()
 
@@ -1787,7 +1862,8 @@ class BigScraper:
         if content is not None:
             art_lang = TextBlob(content).detect_language()
         elif soup.find("meta", {"property": "og:locale"}) is not None:
-            art_lang = soup.find("meta", {"property": "og:locale"})["content"].split("_")[0]
+            art_lang = soup.find("meta", {"property": "og:locale"})[
+                "content"].split("_")[0]
         else:
             art_lang = np.nan
 
