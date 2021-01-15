@@ -1498,8 +1498,9 @@ class BigScraper:
         except:
             title = np.nan
         # img
-        img = html_soup.find("meta", {"property": "og:image"})["content"]
-        if img is None:
+        try:
+            img = html_soup.find("meta", {"property": "og:image"})["content"]
+        except:
             img = np.nan
         # author
         try:
@@ -1508,16 +1509,20 @@ class BigScraper:
         except:
             author = np.nan
         # art_lang
-        art_lang = TextBlob(content).detect_language()
+        if type(content) == str and len(content) >= 3:
+            art_lang = TextBlob(content).detect_language()
+        else:
+            art_lang = np.nan
         # src_url
         src_url = BigScraper.get_base_url(url)
         # tag
-        html_tag = html_soup.find_all("meta", {"property": "article:tag"})
-        tags = []
-        for i in html_tag:
-            tag_i = i["content"]
-            tags.append(tag_i)
-        if tags is None or tags == []:
+        try:
+            html_tag = html_soup.find_all("meta", {"property": "article:tag"})
+            tags = []
+            for i in html_tag:
+                tag_i = i["content"]
+                tags.append(tag_i)
+        except:
             tags = np.nan
         new_row = [content, content_html_str, time, art_lang, title, url,
                    "parlonsrh", "xpath_source", src_url, img, author, tags]
