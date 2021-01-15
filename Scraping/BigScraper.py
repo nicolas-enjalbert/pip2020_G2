@@ -208,7 +208,7 @@ class BigScraper:
         except:
             img = np.nan
         # lang
-        if type(content) == str:
+        if type(content) == str and len(content) >= 3:
             art_lang = TextBlob(content).detect_language()
         else:
             art_lang = np.nan
@@ -253,7 +253,7 @@ class BigScraper:
         except:
             date = datetime.datetime.today().strftime("%Y-%m-%d")
         # art_lang
-        if type(content) == str:
+        if type(content) == str and len(content) >= 3:
             art_lang = TextBlob(content).detect_language()
         else:
             art_lang = np.nan
@@ -386,7 +386,7 @@ class BigScraper:
         # title
         title = html_soup.find("meta", {"property": "og:title"})["content"]
         # art_lang
-        if type(content) == str:
+        if type(content) == str and len(content) >= 3:
             art_lang = TextBlob(content).detect_language()
         else:
             art_lang = np.nan
@@ -636,7 +636,7 @@ class BigScraper:
 
         art_extract_datetime = datetime.date.today()
 
-        if type(art_content) == str:
+        if type(art_content) == str and len(art_content) >= 3:
             art_lang = TextBlob(art_content).detect_language()
         else:
             art_lang = np.nan
@@ -865,7 +865,7 @@ class BigScraper:
         else:
             art_published_datetime = datetime.date.today()
 
-        if art_content is not None:
+        if type(art_content) == str and len(art_content) >= 3:
             art_lang = TextBlob(art_content).detect_language()
         elif soup.find("meta", {"property": "og:locale"}) is not None:
             art_lang = soup.find("meta", {"property": "og:locale"})["content"]
@@ -1280,7 +1280,7 @@ class BigScraper:
         else:
             art_published_datetime = datetime.date.today()
         
-        if type(art_content) == str:
+        if type(art_content) == str and len(art_content) >= 3:
             art_lang = TextBlob(art_content).detect_language()
         else:
             art_lang = np.nan
