@@ -19,7 +19,7 @@ def dailyScrapping():
     
     keywords = pd.read_json('Données/listCouple2.json')#import a list of list of kw or dataframe
     keywords = [[keywords.mot1.loc[i], keywords.mot2.loc[i]] for i in range(len(keywords))]
-    keywords = keywords[:3]
+    keywords = keywords[:100] # delete this line to use all keywords 
     print(keywords)
     
     #Crawl by site
@@ -29,23 +29,25 @@ def dailyScrapping():
             #Generate source code of webpage
             #pages is fix to 1 because we didn't manage to treat the page
             #switch during the project.
-            pages: list = get_query_src_page(pages=1, keywords=kw, 
-                                       source_url=sources['url_source'][i], 
-                                       search_url=sources['url_search'][i], 
-                                       url_attr=sources['url_attr'][i], 
-                                       separator=sources['separator'][i])
-            #Get URL of each article
-            list_url.append(
-                    get_art_url(page_list=pages, 
-                                source_url=sources['url_source'][i], 
-                                tag=sources['tag_art'][i], 
-                                attr_key=sources['attr_key'][i], 
-                                attr_value=sources['attr_value'][i])
-                    )
+            try:
+                pages: list = get_query_src_page(pages=1, keywords=kw, 
+                                           source_url=sources['url_source'][i], 
+                                           search_url=sources['url_search'][i], 
+                                           url_attr=sources['url_attr'][i], 
+                                           separator=sources['separator'][i])
+                #Get URL of each article
+                list_url.append(
+                        get_art_url(page_list=pages, 
+                                    source_url=sources['url_source'][i], 
+                                    tag=sources['tag_art'][i], 
+                                    attr_key=sources['attr_key'][i], 
+                                    attr_value=sources['attr_value'][i])
+                        )
+            except:
+                pass
     
     #Create a flat list from the list of list "list_url"
     list_url_flat: list = [url for sublist in list_url for url in sublist]
-    print(list_url_flat)
 
     BG = BigScraper()
     #urls = pd.read_json('listTestArt.json')
@@ -58,7 +60,7 @@ def dailyScrapping():
                 BG.df.loc[len(BG.df)] = row_scrap
             elif type(row_scrap) == dict:
                 BG.df = BG.df.append(row_scrap, ignore_index=True)
-        except ValueError:
+        except :
             pass
     BG.df['art_content'] = [str(x) for x in BG.df.art_content]    
     BG.df['art_content_html'] = [str(x) for x in BG.df.art_content_html]    
