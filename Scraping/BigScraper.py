@@ -174,7 +174,7 @@ class BigScraper:
         #content, content_html
         try:
             content_html = str(html_soup.find(
-                "div", {"class": "field-item even"}))
+                "div", {"class": "field-items"}))
             content_html_str = str(content_html)
             content = content_html.text.replace("\xa0", "")
         except:
