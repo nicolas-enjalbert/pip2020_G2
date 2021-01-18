@@ -9,6 +9,7 @@ Group 2
 from Scrapping_nouvelles_sources.g2_crawl_by_site_v1 import *
 from Scrapping_nouvelles_sources.BigScraper import *
 import pandas as pd
+import numpy as np
 
 def dailyScrapping():
     """Documentation:
@@ -25,8 +26,10 @@ def dailyScrapping():
     sources: pd.DataFrame = pd.read_json('Données/tags_crawl.json')
     sources: pd.DataFrame = sources.replace({np.nan: None})
     
-    keywords = pd.read_json('Données/listCouple2.json')#import a list of list of kw or dataframe
-    keywords = [[keywords.mot1.loc[i], keywords.mot2.loc[i]] for i in range(len(keywords))]
+    keywords = pd.read_json('Données/listCouple2.json')#import a list of list 
+                                                        #of kw or dataframe
+    keywords = [[keywords.mot1.loc[i], 
+                 keywords.mot2.loc[i]] for i in range(len(keywords))]
     keywords = keywords[:100] # delete this line to use all keywords 
     print(keywords)
     

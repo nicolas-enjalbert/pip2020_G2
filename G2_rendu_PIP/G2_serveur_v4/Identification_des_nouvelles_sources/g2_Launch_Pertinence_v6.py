@@ -16,14 +16,10 @@ Created on Monday 04 January 2021
 # Commented out IPython magic to ensure Python compatibility.
 import pandas as pd
 import numpy as np
-from pandas import DataFrame
 import re
-import nltk
 import time
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
-import json
-import scrapy
 
 
 """##**3/ Some statistics on the names of sites ...**
@@ -141,7 +137,8 @@ def cleandesc(desc : str):
     sent = desc
     sent = "".join([x.lower() if x.isalpha()  else " " for x in sent])
     Porter = SnowballStemmer('french')
-    sent = " ".join([Porter.stem(x) if x.lower() not in stop_words  else "" for x in sent.split()])
+    sent = " ".join([Porter.stem(x) if x.lower() not in stop_words  \
+                     else "" for x in sent.split()])
     sent = " ".join(sent.split())
     return sent
 
@@ -267,7 +264,8 @@ def relevance_query (df : pd.DataFrame) :
 
   df_result_score = result_score_def(df) # we record our relevance scores grouped by site, 
   df_result_score = df_result_score.reset_index()
-  df_result_score['relevance_query'] = df_result_score['relevance_query']/(max(df_result_score['relevance_query'])) # they are divided by the maximum to get a relevance score between 0 and 1,
+  df_result_score['relevance_query'] = \
+  df_result_score['relevance_query']/(max(df_result_score['relevance_query'])) # they are divided by the maximum to get a relevance score between 0 and 1,
   return (df_result_score)
 
 """**3 -** Estimation of relevance by the **position of the article in the crawl**"""
@@ -285,7 +283,8 @@ def score_rank(df : pd.DataFrame) :
   """
 
   for i in range(df.shape[0]):
-    df['score_rank'] = 1/((df['position']/df[df['query'] == df['query'].iloc[i]].shape[0])+1) # the rank score is calculated based on the position of the item in the crawl 
+    df['score_rank'] = \
+    1/((df['position']/df[df['query'] == df['query'].iloc[i]].shape[0])+1) # the rank score is calculated based on the position of the item in the crawl 
     df_result_rank = df.groupby('src_name')['score_rank'].mean() # we do a groupby to get the average of this score per site,
     return (df_result_rank)
 
@@ -302,13 +301,20 @@ def fusion_2(df : pd.DataFrame) :
   """
 
   df_prepare = prepareDF(df)
-  fusion = pd.merge(popularite(df_prepare), relevance_query(df_prepare), how="right", left_on="src_name", right_on="src_name") #the new relevance score is merged with those obtained previously, 
+  fusion = pd.merge(
+          popularite(df_prepare), relevance_query(df_prepare),
+          how="right", left_on="src_name", right_on="src_name") #the new relevance score is merged with those obtained previously, 
   df_result_rank = score_rank(df_prepare)
   df_result_rank = df_result_rank.reset_index()
-  fusion_result = pd.merge(fusion, df_result_rank, how="right", left_on="src_name", right_on="src_name")
+  fusion_result = pd.merge(
+          fusion, df_result_rank, how="right", left_on="src_name", 
+          right_on="src_name")
   fusion_result['score_mean'] = 0.0
   for i in range (len(fusion_result)):
-    fusion_result['score_mean'][i] = fusion_result['popularity'][i]*0.2 + fusion_result['relevance_query'][i]*0.4 + fusion_result['score_rank'][i]*0.4 #These scores are weighted by coefficients applied after reflection and an average relevance score is calculated,
+    fusion_result['score_mean'][i] = \
+    fusion_result['popularity'][i]*0.2 + \
+    fusion_result['relevance_query'][i]*0.4 + \
+    fusion_result['score_rank'][i]*0.4 #These scores are weighted by coefficients applied after reflection and an average relevance score is calculated,
   return(fusion_result)
 
 

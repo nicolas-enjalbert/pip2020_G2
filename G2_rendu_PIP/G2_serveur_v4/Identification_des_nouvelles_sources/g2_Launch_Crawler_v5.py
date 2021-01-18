@@ -158,7 +158,8 @@ def link_filter_date(link, date_filter):
     mois = str(date_limit.month)
     annee = str(date_limit.year)
 
-    link_new = link+"&source=lnt&tbs=cdr%3A1%2Ccd_min%3A"+mois+"%2F"+jour+"%2F"+annee+"%2Ccd_max%3A&tbm="
+    link_new = link+"&source=lnt&tbs=cdr%3A1%2Ccd_min%3A"+mois+\
+    "%2F"+jour+"%2F"+annee+"%2Ccd_max%3A&tbm="
     return link_new
 
 
@@ -187,7 +188,8 @@ def get_url(url, date_filter, API_KEY):
 
 class GoogleSpider(scrapy.Spider):
     """
-    This class lists functions for scraping Google results from a list of keywords
+    This class lists functions for scraping Google results 
+    from a list of keywords
     """
 
     # GoogleSpider class name
@@ -202,10 +204,12 @@ class GoogleSpider(scrapy.Spider):
                         # 'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
                         # 'CONCURRENT_REQUESTS': 2,
                         # 'CONCURRENT_ITEMS': 200,
-                        # Maximum number of retries to be made if the query fails
+                        # Maximum number of retries to be made 
+                        #if the query fails
                         'RETRY_TIMES': 0}
 
-    def start_requests(self, listCouple, API_KEY, length, requestNumber, date_filter, nb_results):
+    def start_requests(self, listCouple, API_KEY, length, requestNumber, 
+                       date_filter, nb_results):
         # Initialisation of DataFrame
         df = pd.DataFrame(columns=['URL', 'Query'])
         # Format changeover
@@ -271,7 +275,8 @@ def Launch_Crawler(p_listCouple,
     
         # Test if the request was successful
         if response.status_code == 200:
-            # Addition of the scraped google results and the corresponding query
+            # Addition of the scraped google results and the 
+            #corresponding query
             list_source.append([response.text, query])
     
             i += 1

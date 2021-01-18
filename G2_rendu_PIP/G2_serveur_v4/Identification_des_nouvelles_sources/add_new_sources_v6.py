@@ -7,7 +7,8 @@ import json
 ########## Function ##########
 
 # Adding new sources
-def Add_New_Sources(df_score, threshold, path_links_crawler, path_files):
+def Add_New_Sources(df_score: pd.DataFrame, threshold: list, 
+                    path_links_crawler: str, path_files: str):
     """ Documentation
 
     Keep the most relevant sites from a threshold and compares them to the list
@@ -21,7 +22,8 @@ def Add_New_Sources(df_score, threshold, path_links_crawler, path_files):
     """
 
     # Keep the most relevant sites from a threshold
-    list_new_sources = list(df_score[df_score['score_mean'] > threshold]['src_name'])
+    list_new_sources = \
+    list(df_score[df_score['score_mean'] > threshold]['src_name'])
 
     # Save the most relevant sites
     with open(path_links_crawler+'list_new_sources.json', 'w') as jsonfile:

@@ -34,7 +34,8 @@ def Remove_Sites(df_crawling, path_files, path_links_crawler):
     
     list_G1 = pd.read_json(path_files+'Sites_g1.json')[0].tolist()
     list_G1_clean = list_G1 #[x for x in list_G1]
-    list_uninteresting = pd.read_json(path_files+'Sites_uninteresting.json')[0].tolist()
+    list_uninteresting = pd.read_json(
+            path_files+'Sites_uninteresting.json')[0].tolist()
     list_uninteresting_clean = list_uninteresting #[x for x in list_uninteresting]
     
     #list_G1 = pd.read_json(path_files+'Sites_g1.json', orient='index').T.values.tolist()
@@ -42,11 +43,13 @@ def Remove_Sites(df_crawling, path_files, path_links_crawler):
     #list_uninteresting = pd.read_json(path_files+'Sites_uninteresting.json', orient='index').T.values.tolist()
     #list_uninteresting_clean = [x[0] for x in list_uninteresting]
     
-    df_crawling_clean = retirer_sites(df_crawling, list_G1_clean, list_uninteresting_clean)
+    df_crawling_clean = retirer_sites(
+            df_crawling, list_G1_clean, list_uninteresting_clean)
     df_crawling_clean = df_crawling_clean.reset_index().drop(columns=['index'])
     
     # Storing the data in JSON format
-    df_crawling_clean.to_json(path_links_crawler+'df_crawling_clean.json', orient='index')
+    df_crawling_clean.to_json(
+            path_links_crawler+'df_crawling_clean.json', orient='index')
     
     return df_crawling_clean
 

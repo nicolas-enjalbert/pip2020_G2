@@ -71,7 +71,8 @@ def NewSources():
                                  path_files)
     
     # Remove some websites
-    df_crawling_remove = Remove_Sites(df_crawling, path_files, path_links_crawler)
+    df_crawling_remove = Remove_Sites(df_crawling, path_files, 
+                                      path_links_crawler)
     
     # Calculate pertinence
     df_score = Launch_Pertinence(df_crawling_remove)

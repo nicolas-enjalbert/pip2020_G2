@@ -27,14 +27,10 @@ Created on Monday 04 January 2021
 # Commented out IPython magic to ensure Python compatibility.
 import pandas as pd
 import numpy as np
-from pandas import DataFrame
 import re
-import nltk
 import time
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
-import json
-import scrapy
 
 
 """##**2/ File import**"""
@@ -45,7 +41,8 @@ import scrapy
 1 - Preparation of data
 """
 
-# Step 1 : get the domain (site name) of the site thanks to the url of the article  
+# Step 1 : get the domain (site name) of the site thanks to the url 
+#of the article  
 
 def site_name(url: str) -> str :
     """Documentation
@@ -122,16 +119,21 @@ def popularite(df : pd.DataFrame):
     return df_final
 
 
-"""**2 -** Estimation of the relevance by taking the **words in common between those of the query, and those present in the title and in the Google summary** of the article."""
+"""**2 -** Estimation of the relevance by taking the **words in 
+common between those of the query, and those present in the title and in 
+the Google summary** of the article."""
 
-# Step 1 : Create the cleanup to get the root, remove punctuation and empty words
+# Step 1 : Create the cleanup to get the root, 
+#remove punctuation and empty words
 
 def cleandesc(desc : str):
     stop_words = set(stopwords.words('french'))
     sent = desc
     sent = "".join([x.lower() if x.isalpha()  else " " for x in sent])
     Porter = SnowballStemmer('french')
-    sent = " ".join([Porter.stem(x) if x.lower() not in stop_words  else "" for x in sent.split()])
+    sent = " ".join(
+            [Porter.stem(x) if x.lower() not in stop_words  else "" \
+             for x in sent.split()])
     sent = " ".join(sent.split())
     return sent
 
@@ -146,14 +148,15 @@ def transform_data (df : pd.DataFrame):
   print("total time : {} mn".format((end_time-start_time)/60))
   return (df)
 
-# Step 3 : to do the function that will determine the relevance of the article according to the request 
+# Step 3 : to do the function that will determine the relevance of 
+#the article according to the request 
 
 
 def common_query_words(df : pd.DataFrame) :
   df = transform_data(df)
   df['cat_pertinence'] = ''
   df['common_words'] = ''
-  df['relevance_query']=0.00
+  df['relevance_query'] = 0.00
   relevance_query : list = [] #list that will store the relevance score,
   #pertinence_j = [] #list that will store the number of the line concerned
   df_relevance = pd.DataFrame(columns=['nb_row','score']).set_index('nb_row') #creation of a df allowing to have the score for each line,
@@ -204,6 +207,7 @@ def common_query_words(df : pd.DataFrame) :
         df['cat_pertinence'][j] = 'None' #no word is found 
   return(df)
 
+
 def result_score_def (df : pd.DataFrame):
   df_relevance_query = common_query_words(df) # record our relevance scores obtained using common words
   df_relevance_query['src_name'] = ''
@@ -217,36 +221,47 @@ def relevance_query (df : pd.DataFrame) :
   df_result_score = result_score_def(df) # we record our relevance scores grouped by site, 
   df_result_score = df_result_score.reset_index()
   print(df_result_score)
-  df_result_score['relevance_query'] = df_result_score['relevance_query']/(np.max(df_result_score['relevance_query'])) # they are divided by the maximum to get a relevance score between 0 and 1,
+  df_result_score['relevance_query'] = \
+  df_result_score['relevance_query']/(np.max(df_result_score['relevance_query'])) # they are divided by the maximum to get a relevance score between 0 and 1,
   print(df_result_score)
   return (df_result_score)
 
 def fusion_score(df : pd.DataFrame) :
-  fusion = pd.merge(popularite(df), relevance_query(df), how="right", left_on="src_name", right_on="src_name") # we merge our first 2 relevance scores by linking them by the src_name column,      
+  fusion = pd.merge(popularite(df), 
+                    relevance_query(df), how="right", left_on="src_name", 
+                    right_on="src_name") # we merge our first 2 relevance scores by linking them by the src_name column,      
   return (fusion)
 
 """**3 -** Estimation of relevance by the **position of the article in the crawl**"""
 
 def score_rank(df : pd.DataFrame) :
   for i in range(df.shape[0]):
-    df['score_rank'] = 1/((df['position']/df[df['query'] == df['query'].iloc[i]].shape[0])+1) # the rank score is calculated based on the position of the item in the crawl 
+    df['score_rank'] = 1/((df['position']/df[df['query'] == \
+                           df['query'].iloc[i]].shape[0])+1) # the rank score is calculated based on the position of the item in the crawl 
     df_result_rank = df.groupby('src_name')['score_rank'].mean() # we do a groupby to get the average of this score per site,
     return (df_result_rank)
 
 def fusion_2(df : pd.DataFrame) :
   df_prepare = prepareDF(df)
-  fusion = pd.merge(popularite(df_prepare), relevance_query(df_prepare), how="right", left_on="src_name", right_on="src_name") #the new relevance score is merged with those obtained previously, 
+  fusion = pd.merge(popularite(df_prepare), relevance_query(df_prepare), 
+                    how="right", left_on="src_name", right_on="src_name") #the new relevance score is merged with those obtained previously, 
   df_result_rank = score_rank(df_prepare)
   df_result_rank = df_result_rank.reset_index()
-  fusion_result = pd.merge(fusion, df_result_rank, how="right", left_on="src_name", right_on="src_name")
+  fusion_result = pd.merge(fusion, df_result_rank, how="right", 
+                           left_on="src_name", right_on="src_name")
   fusion_result['score_mean'] = 0.0
   for i in range (len(fusion_result)):
-    fusion_result['score_mean'][i] = fusion_result['popularity'][i]*0.2 + fusion_result['relevance_query'][i]*0.4 + fusion_result['score_rank'][i]*0.4 #These scores are weighted by coefficients applied after reflection and an average relevance score is calculated,
+    fusion_result['score_mean'][i] = \
+    fusion_result['popularity'][i]*0.2 + \
+    fusion_result['relevance_query'][i]*0.4 + \
+    fusion_result['score_rank'][i]*0.4 #These scores are weighted by coefficients applied after reflection and an average relevance score is calculated,
   return(fusion_result)
 
 
 def Launch_Pertinence(df_crawling_remove):
-    data = df_crawling_remove.rename(columns = {'URL': 'art_url', 'Query': 'query', 'Title': 'title', 'Snippet': 'resume', 'Rank': 'position'})
+    data = df_crawling_remove.rename(
+            columns = {'URL': 'art_url', 'Query': 'query', 'Title': 'title',
+                       'Snippet': 'resume', 'Rank': 'position'})
     df_new = fusion_2(data)
     df_score = df_new.sort_values(by = ['score_mean'], ascending=False)
     return df_score

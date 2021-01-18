@@ -12,7 +12,8 @@ import pandas as pd
 
 ########## Functions ##########
 
-def remove_sites_lists(df, list_G1: list, list_uninteresting: list):
+def remove_sites_lists(df: pd.DataFrame, list_G1: list, 
+                       list_uninteresting: list) -> pd.DataFrame:
     """Documentation
 
     Remove the sites we don't want
@@ -42,7 +43,8 @@ def remove_sites_lists(df, list_G1: list, list_uninteresting: list):
     return df_new
 
 
-def Remove_Sites(df_crawling, path_files, path_links_crawler):
+def Remove_Sites(df_crawling: pd.DataFrame, path_files: str, 
+                 path_links_crawler: str) -> pd.DataFrame:
     """Documentation
 
     Load the list of the sites the G1 scrapped and the list of the
@@ -64,7 +66,8 @@ def Remove_Sites(df_crawling, path_files, path_links_crawler):
     list_G1_clean = list_G1 #[x for x in list_G1]
 
     # Openning the list of the non-pertinent sites
-    list_uninteresting = pd.read_json(path_files+'Sites_uninteresting.json')[0].tolist()
+    list_uninteresting = pd.read_json(
+            path_files+'Sites_uninteresting.json')[0].tolist()
     list_uninteresting_clean = list_uninteresting #[x for x in list_uninteresting]
 
 

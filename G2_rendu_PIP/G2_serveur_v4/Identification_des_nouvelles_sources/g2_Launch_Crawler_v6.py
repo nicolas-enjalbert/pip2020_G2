@@ -33,7 +33,7 @@ import time
 
 ########## Functions ##########
 
-def create_google_url(query, nb_results):
+def create_google_url(query: str, nb_results: int) -> str:
     """Documentation
 
     Allows to create a Google URL from a query
@@ -52,7 +52,7 @@ def create_google_url(query, nb_results):
     return google_url
 
 
-def combAND(couple):
+def combAND(couple: list) -> str:
     """Documentation
 
     Create a combination of the 2 members of a couple with AND between them
@@ -69,7 +69,7 @@ def combAND(couple):
     return comb
 
 
-def listToAND(listCouple):
+def listToAND(listCouple: list) -> list:
     """Documentation
 
     Create a list of the combination of the couples of listCouple
@@ -110,7 +110,7 @@ def combOR(tuple):
     return final
 
 
-def listToOR(listTuple):
+def listToOR(listTuple: list) -> list:
     """Documentation
 
     Applying the function combOR to a list of tuples
@@ -160,14 +160,14 @@ def listComb(listAND, numbT=2, iteration=int(1000)):
     return finalList
 
 
-def link_filter_date(link, date_filter):
+def link_filter_date(link: str, date_filter: str) -> str:
     """Documentation
 
     A function that allows to add a "limit date" parameter in the link
 
     Parameters :
         link : URL to which the date filter should be added
-        date_limit : Limit date
+        date_filter : Limit date
 
     Out :
         link_new : URL with a date filter
@@ -183,12 +183,13 @@ def link_filter_date(link, date_filter):
     mois = str(date_limit.month)
     annee = str(date_limit.year)
 
-    link_new = link+"&source=lnt&tbs=cdr%3A1%2Ccd_min%3A"+mois+"%2F"+jour+"%2F"+annee+"%2Ccd_max%3A&tbm="
+    link_new = link+"&source=lnt&tbs=cdr%3A1%2Ccd_min%3A"+mois+"%2F"+\
+    jour+"%2F"+annee+"%2Ccd_max%3A&tbm="
 
     return link_new
 
 
-def get_url(url, date_filter, API_KEY):
+def get_url(url: str, date_filter: str, API_KEY: str):
     """Documentation
 
     Creation of the URL that will allow the legal scraping of Google results

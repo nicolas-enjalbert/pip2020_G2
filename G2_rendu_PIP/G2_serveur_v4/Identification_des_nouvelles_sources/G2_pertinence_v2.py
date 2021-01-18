@@ -21,39 +21,22 @@ Created on Monday 04 January 2021
 #!pip install scrapy
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 #from google.colab import files
-from wordcloud import WordCloud
-from pandas import DataFrame
 #import warnings
 #warnings.filterwarnings('ignore')
 # %matplotlib inline
 import pkg_resources,imp
 imp.reload(pkg_resources)
-import spacy
 import re
 import nltk
 nltk.download('stopwords')
 nltk.download('wordnet')
 from nltk.stem.snowball import FrenchStemmer
 stemmer = FrenchStemmer()
-import pickle
 import time
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words('french'))
-from nltk.stem import LancasterStemmer
 from nltk.stem import SnowballStemmer
-import json
-import random
-import scrapy
-from scrapy import Selector
-from requests import get
-from urllib.parse import urlencode
-from urllib.parse import urlparse
-from datetime import datetime
-from datetime import date
-from datetime import timedelta
 
 """##**2/ File import**"""
 
@@ -151,7 +134,8 @@ def cleandesc(desc):
     sent = desc
     sent = "".join([x.lower() if x.isalpha()  else " " for x in sent])
     Porter = SnowballStemmer('french')
-    sent = " ".join([Porter.stem(x) if x.lower() not in stop_words  else "" for x in sent.split()])
+    sent = " ".join([Porter.stem(x) \
+    if x.lower() not in stop_words  else "" for x in sent.split()])
     sent = " ".join(sent.split())
     return sent
 
@@ -228,43 +212,58 @@ def result_score_def (df):
   df_relevance_query = common_query_words(df)
   df_relevance_query['src_name'] = ''
   for i in range (len(df_relevance_query)) :
-    df_relevance_query['src_name'][i] = site_name(df_relevance_query['art_url'][i])
-  df_result_score = df_relevance_query.groupby('src_name')['relevance_query'].mean()
+    df_relevance_query['src_name'][i] = \
+    site_name(df_relevance_query['art_url'][i])
+  df_result_score = \
+  df_relevance_query.groupby('src_name')['relevance_query'].mean()
   return (df_result_score)
 
 def relevance_query (df) :
   df_result_score = result_score_def(df)
   df_result_score = df_result_score.reset_index()
-  df_result_score['relevance_query'] = df_result_score['relevance_query']/(max(df_result_score['relevance_query']))
+  df_result_score['relevance_query'] = \
+  df_result_score['relevance_query']/(max(df_result_score['relevance_query']))
   return (df_result_score)
 
 def fusion_score(df) :
-  fusion = pd.merge(popularite(df), relevance_query(df), how="right", left_on="src_name", right_on="src_name")
+  fusion = pd.merge(
+          popularite(df), relevance_query(df), how="right", 
+          left_on="src_name", right_on="src_name")
   return (fusion)
 
 """**3 -** Estimation of relevance by the **position of the article in the crawl**"""
 
 def score_rank(df) :
   for i in range(df.shape[0]):
-    df['score_rank'] = 1 - df['position']/df[df['query'] == df['query'].iloc[i]].shape[0]
+    df['score_rank'] = \
+    1 - df['position']/df[df['query'] == df['query'].iloc[i]].shape[0]
     df_result_rank = df.groupby('src_name')['score_rank'].mean()
     return (df_result_rank)
 
 def fusion_2(df) :
   df_prepare = prepareDF(df)
-  fusion = pd.merge(popularite(df_prepare), relevance_query(df_prepare), how="right", left_on="src_name", right_on="src_name")
+  fusion = pd.merge(popularite(df_prepare), relevance_query(df_prepare), 
+                    how="right", left_on="src_name", right_on="src_name")
   print(fusion)
   df_result_rank = score_rank(df_prepare)
   df_result_rank = df_result_rank.reset_index()
-  fusion_result = pd.merge(fusion, df_result_rank, how="right", left_on="src_name", right_on="src_name")
+  fusion_result = pd.merge(fusion, df_result_rank, how="right", 
+                           left_on="src_name", right_on="src_name")
   fusion_result['score_mean']=0.0
   for i in range (len(fusion_result)):
-    fusion_result['score_mean'][i] = fusion_result['popularity'][i]*0.2 + fusion_result['relevance_query'][i]*0.4 + fusion_result['score_rank'][i]*0.4
+    fusion_result['score_mean'][i] = \
+    fusion_result['popularity'][i]*0.2 + \
+    fusion_result['relevance_query'][i]*0.4 + \
+    fusion_result['score_rank'][i]*0.4
   return(fusion_result)
 
-df_crawling_remove = pd.read_json('/home/sid2019-7/Documents/M2/PIP2021/G2_serveur_v2/Données/liste_couples_shuffle.json')
+
+path: str = '/home/sid2019-7/Documents/M2/PIP2021/G2_serveur_v2/Données/liste_couples_shuffle.json'
+df_crawling_remove = pd.read_json(path)
 print(df_crawling_remove.columns)
 data = df_crawling_remove[0:2]
 #data.drop(['Position'], axis='columns', inplace=True)
-data = data.rename(columns = {'URL': 'art_url', 'Query': 'query', 'Title': 'title', 'Snippet': 'resume', 'Rank': 'position'})
+data = data.rename(
+        columns = {'URL': 'art_url', 'Query': 'query', 'Title': 'title', 
+                   'Snippet': 'resume', 'Rank': 'position'})
 df_new = fusion_2(data)
