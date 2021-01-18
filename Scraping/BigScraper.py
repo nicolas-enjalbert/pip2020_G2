@@ -2102,37 +2102,9 @@ class BigScraper:
         # Getting content
         list_balises = ["h1", "h2", "h3", "h4", "h5", "h6", "b", "strong", "i", "em",
                         "pre", "mark", "small", "del", "s", "ins", "u", "sub", "sup", "dfn", "p", "span", "ul", "li"]
-        if soup.find('article') is not None:
-            content_html = soup.find('article')
-            if soup.find('article').find_all(list_balises, recursive=False):
-                content = soup.find('article').find_all(
-                    list_balises, string=True)
-                content = ' '.join(tag.text for tag in content)
-            else:
-                list_p = soup.find('article').find_all(
-                    'div', recursive='False')
-                list_parent_p = [p.parent for p in list_p]
-                if len(set(list_parent_p)) == 1:
-                    content_html = list_parent_p[0]
-                    content = ' '.join(
-                        tag.text for tag in content_html.children if tag.name in list_balises)
-                else:
-                    content_html = soup.find('article')
-                    content = [el.get_text() for el in list_parent_p]
-                    content = ' '.join(content)
-        else:
-            list_div = list()
-            for el in soup.find_all('div'):
-                if el.find_all('p', recursive=False):
-                    list_div.append(el)
-            index_max = np.argmax([len(block.find_all('p'))
-                                   for block in list_div])
-            content_html = list_div[index_max]
-            content = ' '.join(
-                tag.text for tag in content_html.children if tag.name in list_balises)
-
-        content = content.replace('\xa0', '').replace(
-            '\t', '').replace('\r', '').strip()
+        list_parents = [tag.parent for tag in soup.find_all(list_balises)]
+        content_html = max(set(list_parents), key = list_parents.count)
+        content = " ".join(tag.text for tag in content_html.contents if tag.name in list_balises)
         content_html_str = str(content_html)
 
         # Getting date of publication
